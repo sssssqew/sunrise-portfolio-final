@@ -1,7 +1,7 @@
 
 import React, { useState, useEffect, useMemo, useRef } from 'react';
 import { createRoot } from 'react-dom/client';
-import './index.css';
+import "./index.css";
 
 // --- DATA & TYPES --- //
 
@@ -704,32 +704,40 @@ const AdminDashboard: React.FC<{
 // --- MAIN APP COMPONENT --- //
 
 const App: React.FC = () => {
-    const [projects, setProjects] = useState<Project[] | null>(null);
+    const [projects, setProjects] = useState<Project[]>([]);
+    const [isLoading, setIsLoading] = useState(true);
     const [adminPassword, setAdminPassword] = useLocalStorage<string>('admin-password', '0000');
     const [loggedIn, setLoggedIn] = useState(() => !!sessionStorage.getItem('admin-logged-in'));
     const [activePage, setActivePage] = useState('Frontend');
     const [selectedProjectId, setSelectedProjectId] = useState<string | null>(null);
 
     useEffect(() => {
+        setIsLoading(true);
         fetch('/projects.json')
-            .then(response => response.json())
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Network response was not ok');
+                }
+                return response.json();
+            })
             .then(data => setProjects(data))
             .catch(error => {
                 console.error("Error fetching projects:", error);
                 setProjects([]); // Set to empty array on error
+            })
+            .finally(() => {
+                setIsLoading(false);
             });
     }, []);
 
-    const liveProjects = useMemo(() => projects || [], [projects]);
-
     const selectedProject = useMemo(() => {
-        return liveProjects.find(p => p.id === selectedProjectId) || null;
-    }, [liveProjects, selectedProjectId]);
+        return projects.find(p => p.id === selectedProjectId) || null;
+    }, [projects, selectedProjectId]);
     
     const handleNavigateProject = (direction: 'prev' | 'next') => {
         if (!selectedProject) return;
 
-        const currentTypeProjects = liveProjects.filter(p => p.type === selectedProject.type);
+        const currentTypeProjects = projects.filter(p => p.type === selectedProject.type);
         const currentIndex = currentTypeProjects.findIndex(p => p.id === selectedProject.id);
 
         if (currentIndex === -1) return;
@@ -745,7 +753,7 @@ const App: React.FC = () => {
     };
 
     const renderPage = () => {
-        if (projects === null) {
+        if (isLoading) {
             return <div className="loading-fullscreen">Loading Portfolio...</div>;
         }
 
@@ -759,7 +767,7 @@ const App: React.FC = () => {
 
         if (loggedIn) {
              return <AdminDashboard 
-                        projects={liveProjects}
+                        projects={projects}
                         setProjects={setProjects}
                         setAdminPassword={setAdminPassword}
                         setLoggedIn={setLoggedIn}
@@ -768,15 +776,15 @@ const App: React.FC = () => {
 
         switch (activePage) {
             case 'Frontend':
-                return <PortfolioPage projects={liveProjects} type="Frontend" onProjectSelect={setSelectedProjectId} />;
+                return <PortfolioPage projects={projects} type="Frontend" onProjectSelect={setSelectedProjectId} />;
             case 'UX Design':
-                return <PortfolioPage projects={liveProjects} type="UX Design" onProjectSelect={setSelectedProjectId}/>;
+                return <PortfolioPage projects={projects} type="UX Design" onProjectSelect={setSelectedProjectId}/>;
             case 'About':
                 return <AboutPage />;
             case 'AdminLogin':
                 return <AdminLogin setLoggedIn={setLoggedIn} adminPassword={adminPassword} />;
             default:
-                return <PortfolioPage projects={liveProjects} type="Frontend" onProjectSelect={setSelectedProjectId}/>;
+                return <PortfolioPage projects={projects} type="Frontend" onProjectSelect={setSelectedProjectId}/>;
         }
     };
     
