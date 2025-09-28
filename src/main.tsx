@@ -1,7 +1,7 @@
 
 import React, { useState, useEffect, useMemo, useRef } from 'react';
 import { createRoot } from 'react-dom/client';
-import "./index.css";
+import './index.css';
 
 // --- DATA & TYPES --- //
 
@@ -713,7 +713,7 @@ const App: React.FC = () => {
 
     useEffect(() => {
         setIsLoading(true);
-        fetch('/projects.json')
+        fetch(`${import.meta.env.BASE_URL}projects.json`)
             .then(response => {
                 if (!response.ok) {
                     throw new Error('Network response was not ok');
