@@ -89,7 +89,7 @@ const Header: React.FC<{
         <header className={`header ${isProjectOpen ? 'hidden' : ''}`}>
             <div className="container">
                 <div className="logo" onClick={() => setActivePage('Frontend')}>
-                    <span>JOHN DOE</span>
+                    <span>SUNGYONG LEE</span>
                 </div>
                 <nav>
                     <ul>

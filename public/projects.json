@@ -26,7 +26,13 @@
       "Codebase Optimization via Functional Programming"
     ],
     "challenges": "Significant challenges included dynamically setting distinct animation start points for various sections with a unified function, precisely calculating the animation range for each, and accurately determining scrollbar width to prevent layout disruptions. Optimizing the code structure for increasing sections and implementing separate animation behaviors for mobile environments also proved difficult. \n\nThese complexities were overcome through extensive research into existing implementations and a dedicated effort to develop an optimized, universally applicable function that intelligently manages animation across all sections.",
-    "gallery": [],
+    "gallery": [
+      "https://raw.githubusercontent.com/sssssqew/product-design-portfolio/refs/heads/main/imgs/web-animation/1.jpg",
+      "https://raw.githubusercontent.com/sssssqew/product-design-portfolio/refs/heads/main/imgs/web-animation/2.jpg",
+      "https://raw.githubusercontent.com/sssssqew/product-design-portfolio/refs/heads/main/imgs/web-animation/3.jpg",
+      "https://raw.githubusercontent.com/sssssqew/product-design-portfolio/refs/heads/main/imgs/web-animation/4.jpg",
+      "https://raw.githubusercontent.com/sssssqew/product-design-portfolio/refs/heads/main/imgs/web-animation/5.jpg"
+    ],
     "id": "1759219635336",
     "date": "2025-09-30"
   },
