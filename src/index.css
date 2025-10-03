@@ -1138,7 +1138,10 @@ button:hover, .button-primary:hover {
         top: 0.5rem;
         right: 0.5rem;
     }
-    .cinematic-bar {
+    .cinematic-bar.top {
+        display: none;
+    }
+    .cinematic-bar.bottom {
         height: 40px;
     }
 }

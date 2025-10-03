@@ -1,3 +1,9 @@
+declare global {
+  interface ScreenOrientation extends EventTarget {
+    lock(orientation: 'portrait-primary'): Promise<void>;
+    unlock(): void;
+  }
+}
 
 import React, { useState, useEffect, useMemo, useRef } from 'react';
 import { createRoot } from 'react-dom/client';
@@ -199,6 +205,26 @@ const Lightbox: React.FC<{
 
         touchStartRef.current = null; // 초기화
     };
+    // Screen Orientation Lock Effect
+    useEffect(() => {
+        const lockScreen = async () => {
+            try {
+                if (window.screen && window.screen.orientation && window.screen.orientation.lock) {
+                    await window.screen.orientation.lock('portrait-primary');
+                }
+            } catch (error) {
+                console.error("Screen orientation lock failed:", error);
+            }
+        };
+
+        lockScreen();
+
+        return () => {
+            if (window.screen && window.screen.orientation && window.screen.orientation.unlock) {
+                window.screen.orientation.unlock();
+            }
+        };
+    }, []); // Runs only when the lightbox opens and closes
 
     useEffect(() => {
         const handleKeyDown = (e: KeyboardEvent) => {
