@@ -265,7 +265,7 @@ const ProjectDetailPage: React.FC<{
                     <div className="hero-overlay"></div>
                     <div className="hero-content">
                         <h1>{project.title}</h1>
-                        <p>{project.outcome}</p>
+                        {/* <p>{project.outcome}</p> */}
                     </div>
                 </header>
             </AnimatedSection>
