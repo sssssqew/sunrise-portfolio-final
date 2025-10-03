@@ -170,6 +170,84 @@ const ConfirmationModal: React.FC<{
     );
 };
 
+const Lightbox: React.FC<{
+    images: string[];
+    currentIndex: number;
+    onClose: () => void;
+    onNavigate: (direction: 'prev' | 'next') => void;
+}> = ({ images, currentIndex, onClose, onNavigate }) => {
+    const prevIndexRef = useRef(currentIndex);
+    useEffect(() => {
+        const handleKeyDown = (e: KeyboardEvent) => {
+            if (e.key === 'Escape') onClose();
+            if (e.key === 'ArrowLeft') onNavigate('prev');
+            if (e.key === 'ArrowRight') onNavigate('next');
+        };
+        window.addEventListener('keydown', handleKeyDown);
+        return () => window.removeEventListener('keydown', handleKeyDown);
+    }, [onClose, onNavigate]);
+
+    let animationClass = 'fade-in-scale';
+    const prev = prevIndexRef.current;
+    const current = currentIndex;
+    const len = images.length;
+
+    if (prev !== current) {
+        if ((prev + 1) % len === current) {
+            animationClass = 'slide-in-next';
+        } else {
+            animationClass = 'slide-in-prev';
+        }
+    }
+
+    useEffect(() => {
+        prevIndexRef.current = currentIndex;
+    });
+
+    if (currentIndex === null || !images || images.length === 0) return null;
+
+    return (
+        <div className="lightbox-overlay" onClick={onClose}>
+            <button className="lightbox-close" aria-label="Close image viewer" onClick={onClose}>
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12 19 6.41z"/></svg>
+            </button>
+            
+            <div className="lightbox-wrapper" onClick={(e) => e.stopPropagation()}>
+                <button className="lightbox-nav prev" onClick={() => onNavigate('prev')} aria-label="Previous image">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><path d="M15.41 7.41L14 6l-6 6 6 6 1.41-1.41L10.83 12l4.58-4.59z"/></svg>
+                </button>
+                
+                <div className="lightbox-cinematic-container">
+                    <div className="cinematic-bar top"></div>
+                    <div className="lightbox-image-container">
+                        {/* <div
+                            className="lightbox-background-image"
+                            style={{ backgroundImage: `url(${images[currentIndex]})` }}
+                         ></div> */}
+                        <div key={currentIndex} className={`lightbox-image-wrapper ${animationClass}`}>
+                            <img
+                                src={images[currentIndex]}
+                                alt={`Gallery image ${currentIndex + 1}`}
+                                className="lightbox-image"
+                                onLoad={(e) => e.currentTarget.style.opacity = '1'}
+                            />
+                        </div>
+                    </div>
+                    <div className="cinematic-bar bottom">
+                        <div className="lightbox-caption">
+                            {currentIndex + 1} / {images.length}
+                        </div>
+                    </div>
+                </div>
+
+                <button className="lightbox-nav next" onClick={() => onNavigate('next')} aria-label="Next image">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><path d="M8.59 16.59L13.17 12 8.59 7.41 10 6l6 6-6 6-1.41-1.41z"/></svg>
+                </button>
+            </div>
+        </div>
+    );
+};
+
 // --- PAGES / VIEWS --- //
 
 const PortfolioPage: React.FC<{ projects: Project[], type: ProjectType, onProjectSelect: (id: string) => void }> = ({ projects, type, onProjectSelect }) => {
@@ -250,9 +328,20 @@ const ProjectDetailPage: React.FC<{
     onClose: () => void;
     onNavigate: (direction: 'prev' | 'next') => void;
 }> = ({ project, onClose, onNavigate }) => {
+    const [lightboxIndex, setLightboxIndex] = useState<number | null>(null);
      useEffect(() => {
         window.scrollTo(0, 0);
     }, [project]);
+
+    const handleLightboxNavigate = (direction: 'prev' | 'next') => {
+        if (lightboxIndex === null || !project.gallery?.length) return;
+        const gallerySize = project.gallery.length;
+        if (direction === 'next') {
+            setLightboxIndex((prevIndex) => (prevIndex! + 1) % gallerySize);
+        } else {
+            setLightboxIndex((prevIndex) => (prevIndex! - 1 + gallerySize) % gallerySize);
+        }
+    };
 
     return (
         <article className="project-detail-page">
@@ -299,7 +388,7 @@ const ProjectDetailPage: React.FC<{
                     <AnimatedSection className="detail-section">
                         <h2>Gallery</h2>
                         <div className="detail-gallery">
-                            {project.gallery.map((img, index) => <img key={index} src={img} alt={`${project.title} gallery image ${index + 1}`} loading="lazy" />)}
+                            {project.gallery.map((img, index) => <img key={index} src={img} alt={`${project.title} gallery image ${index + 1}`} loading="lazy" onClick={() => setLightboxIndex(index)}/>)}
                         </div>
                     </AnimatedSection>
                 )}
@@ -315,6 +404,14 @@ const ProjectDetailPage: React.FC<{
                 <button onClick={() => onNavigate('prev')}>&larr; Previous Project</button>
                 <button onClick={() => onNavigate('next')}>Next Project &rarr;</button>
             </div>
+            {lightboxIndex !== null && project.gallery?.length > 0 && (
+                <Lightbox
+                    images={project.gallery}
+                    currentIndex={lightboxIndex}
+                    onClose={() => setLightboxIndex(null)}
+                    onNavigate={handleLightboxNavigate}
+                />
+            )}
         </article>
     );
 };

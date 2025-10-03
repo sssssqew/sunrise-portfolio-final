@@ -565,6 +565,7 @@ html, body {
     height: auto;
     border-radius: var(--border-radius);
     border: 1px solid var(--border-color);
+    cursor: zoom-in;
 }
 
 .detail-nav {
@@ -908,6 +909,185 @@ button:hover, .button-primary:hover {
     white-space: pre-wrap;
 }
 
+/* --- Lightbox --- */
+.lightbox-overlay {
+    position: fixed;
+    inset: 0;
+    background-color: rgba(0, 0, 0, 0.85);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 2000;
+    backdrop-filter: blur(8px);
+    animation: fadeIn 0.3s ease;
+    /* padding: 1rem; */
+}
+
+.lightbox-wrapper {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.lightbox-cinematic-container {
+    background-color: #000;
+    display: flex;
+    flex-direction: column;
+    /* max-width: 1600px; */
+    width: 100%;
+    height: 100%;
+    box-shadow: 0 10px 40px rgba(0,0,0,0.5);
+}
+
+.cinematic-bar {
+    height: 50px;
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.lightbox-image-container {
+    flex-grow: 1;
+    position: relative;
+    overflow: hidden;
+    min-height: 0;
+}
+
+.lightbox-background-image {
+    position: absolute;
+    inset: 0;
+    z-index: 1;
+    background-size: cover;
+    background-position: center;
+    filter: blur(15px) brightness(0.5);
+    transform: scale(1.1);
+}
+
+.lightbox-image-wrapper {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 2;
+}
+
+.lightbox-image {
+    max-width: 100%;
+    flex-shrink: 0;
+    object-fit: contain;
+    opacity: 0;
+    transition: opacity 0.2s ease-in;
+}
+
+
+.lightbox-caption {
+    color: var(--text-secondary-color);
+    font-size: 1.1rem;
+    user-select: none;
+}
+
+.lightbox-close, .lightbox-nav {
+    position: absolute;
+    background: transparent;
+    border: transparent;
+    color: var(--primary-color);
+    cursor: pointer;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.3s ease;
+    z-index: 2010;
+    padding: 0;
+}
+
+.lightbox-close:hover, .lightbox-nav:hover {
+    background: rgba(0, 0, 0, 0.5);
+    color: var(--primary-color);
+    transform: scale(1.1);
+}
+.lightbox-close:hover{
+    transform: rotate(45deg);
+}
+
+.lightbox-close {
+    top: 0.3rem;
+    right: 0.5rem;
+    width: 44px;
+    height: 44px;
+    transform: scale(1);
+}
+.lightbox-close svg {
+    width: 24px;
+    height: 24px;
+}
+
+.lightbox-nav {
+    top: 50%;
+    width: 50px;
+    height: 50px;
+    transform: translateY(-50%);
+}
+
+.lightbox-nav.prev {
+    left: 1rem;
+}
+
+
+.lightbox-nav.next {
+    right: 1rem;
+}
+/* .lightbox-nav.next:hover {
+    transform: translateY(-50%) scale(1.1);
+} */
+
+.lightbox-nav svg {
+    width: 50px;
+    height: 50px;
+    transform: scale(1);
+}
+.lightbox-nav:hover{
+    transform: translateY(-50%) scale(1.3);
+}
+
+
+/* Animation Keyframes and Classes */
+@keyframes slideInFromRight {
+    from {
+        opacity: 0;
+        transform: translateX(50%);
+    }
+    to {
+        opacity: 1;
+        transform: translateX(0);
+    }
+}
+@keyframes slideInFromLeft {
+    from {
+        opacity: 0;
+        transform: translateX(-50%);
+    }
+    to {
+        opacity: 1;
+        transform: translateX(0);
+    }
+}
+
+.lightbox-image-wrapper.fade-in-scale {
+    animation: fadeInScale 0.5s ease-out forwards;
+}
+.lightbox-image-wrapper.slide-in-next {
+    animation: slideInFromRight 0.5s ease-out forwards;
+}
+.lightbox-image-wrapper.slide-in-prev {
+    animation: slideInFromLeft 0.5s ease-out forwards;
+}
+
 /* Responsive */
 @media (max-width: 768px) {
     .header .container {
@@ -936,5 +1116,22 @@ button:hover, .button-primary:hover {
     }
     .detail-meta {
         grid-template-columns: 1fr 1fr;
+    }
+    .lightbox-nav {
+        width: 44px;
+        height: 44px;
+    }
+    .lightbox-nav.prev {
+        left: 0.5rem;
+    }
+    .lightbox-nav.next {
+        right: 0.5rem;
+    }
+    .lightbox-close {
+        top: 0.5rem;
+        right: 0.5rem;
+    }
+    .cinematic-bar {
+        height: 40px;
     }
 }
