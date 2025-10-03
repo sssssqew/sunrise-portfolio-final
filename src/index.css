@@ -1138,10 +1138,21 @@ button:hover, .button-primary:hover {
         top: 0.5rem;
         right: 0.5rem;
     }
-    .cinematic-bar.top {
-        display: none;
+    .lightbox-nav,
+    .cinematic-bar {
+        display: none; /* 화살표 버튼과 상하단 바를 모두 숨깁니다. */
     }
-    .cinematic-bar.bottom {
-        height: 40px;
+
+    .lightbox-caption {
+        /* 새로운 '알약' 스타일 */
+        position: absolute;
+        bottom: 1.5rem;
+        left: 50%;
+        transform: translateX(-50%);
+        background-color: rgba(0, 0, 0, 0.6);
+        color: var(--text-color);
+        padding: 0.25rem 0.75rem;
+        border-radius: 20px;
+        z-index: 3;
     }
 }

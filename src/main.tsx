@@ -1,9 +1,9 @@
-declare global {
-  interface ScreenOrientation extends EventTarget {
-    lock(orientation: 'portrait-primary'): Promise<void>;
-    unlock(): void;
-  }
-}
+// declare global {
+//   interface ScreenOrientation extends EventTarget {
+//     lock(orientation: 'portrait-primary'): Promise<void>;
+//     unlock(): void;
+//   }
+// }
 
 import React, { useState, useEffect, useMemo, useRef } from 'react';
 import { createRoot } from 'react-dom/client';
@@ -206,25 +206,25 @@ const Lightbox: React.FC<{
         touchStartRef.current = null; // 초기화
     };
     // Screen Orientation Lock Effect
-    useEffect(() => {
-        const lockScreen = async () => {
-            try {
-                if (window.screen && window.screen.orientation && window.screen.orientation.lock) {
-                    await window.screen.orientation.lock('portrait-primary');
-                }
-            } catch (error) {
-                console.error("Screen orientation lock failed:", error);
-            }
-        };
+    // useEffect(() => {
+    //     const lockScreen = async () => {
+    //         try {
+    //             if (window.screen && window.screen.orientation && window.screen.orientation.lock) {
+    //                 await window.screen.orientation.lock('portrait-primary');
+    //             }
+    //         } catch (error) {
+    //             console.error("Screen orientation lock failed:", error);
+    //         }
+    //     };
 
-        lockScreen();
+    //     lockScreen();
 
-        return () => {
-            if (window.screen && window.screen.orientation && window.screen.orientation.unlock) {
-                window.screen.orientation.unlock();
-            }
-        };
-    }, []); // Runs only when the lightbox opens and closes
+    //     return () => {
+    //         if (window.screen && window.screen.orientation && window.screen.orientation.unlock) {
+    //             window.screen.orientation.unlock();
+    //         }
+    //     };
+    // }, []); // Runs only when the lightbox opens and closes
 
     useEffect(() => {
         const handleKeyDown = (e: KeyboardEvent) => {
@@ -284,15 +284,16 @@ const Lightbox: React.FC<{
                         </div>
                     </div>
                     <div className="cinematic-bar bottom">
-                        <div className="lightbox-caption">
-                            {currentIndex + 1} / {images.length}
-                        </div>
+                        
                     </div>
                 </div>
 
                 <button className="lightbox-nav next" onClick={() => onNavigate('next')} aria-label="Next image">
                     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><path d="M8.59 16.59L13.17 12 8.59 7.41 10 6l6 6-6 6-1.41-1.41z"/></svg>
                 </button>
+                <div className="lightbox-caption">
+                    {currentIndex + 1} / {images.length}
+                </div>
             </div>
         </div>
     );
