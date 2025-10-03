@@ -278,7 +278,7 @@ const ProjectDetailPage: React.FC<{
                     <div><strong>Role</strong><span>{project.role}</span></div>
                 </AnimatedSection>
 
-                <AnimatedSection className="detail-section">
+                <AnimatedSection className="detail-section newline">
                     <h2>Project Overview</h2>
                     <p>{project.description}</p>
                 </AnimatedSection>
@@ -290,7 +290,7 @@ const ProjectDetailPage: React.FC<{
                     </ol>
                 </AnimatedSection>
 
-                <AnimatedSection className="detail-section">
+                <AnimatedSection className="detail-section newline">
                     <h2>Challenges & Solutions</h2>
                     <p>{project.challenges}</p>
                 </AnimatedSection>

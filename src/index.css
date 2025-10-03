@@ -305,6 +305,7 @@ html, body {
   font-size: 0.9rem;
   margin-bottom: 1rem;
   min-height: 50px;
+  white-space: pre-wrap;
 }
 
 .card-details {
@@ -902,6 +903,9 @@ button:hover, .button-primary:hover {
     background-color: #a54f60; /* A darker shade of the error color */
     border-color: #a54f60;
     color: var(--text-color);
+}
+.newline{
+    white-space: pre-wrap;
 }
 
 /* Responsive */
