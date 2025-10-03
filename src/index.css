@@ -1126,8 +1126,7 @@ button:hover, .button-primary:hover {
         grid-template-columns: 1fr 1fr;
     }
     .lightbox-nav {
-        width: 44px;
-        height: 44px;
+        display: none;
     }
     .lightbox-nav.prev {
         left: 0.5rem;

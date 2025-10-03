@@ -177,6 +177,29 @@ const Lightbox: React.FC<{
     onNavigate: (direction: 'prev' | 'next') => void;
 }> = ({ images, currentIndex, onClose, onNavigate }) => {
     const prevIndexRef = useRef(currentIndex);
+    const touchStartRef = useRef<number | null>(null);
+
+    const handleTouchStart = (e: React.TouchEvent) => {
+        touchStartRef.current = e.touches[0].clientX;
+    };
+    const handleTouchEnd = (e: React.TouchEvent) => {
+        if (touchStartRef.current === null) return;
+
+        const touchEnd = e.changedTouches[0].clientX;
+        const touchDiff = touchStartRef.current - touchEnd;
+        const swipeThreshold = 50; // 최소 스와이프 거리
+
+        if (touchDiff > swipeThreshold) {
+            // 왼쪽으로 스와이프 -> 다음 이미지
+            onNavigate('next');
+        } else if (touchDiff < -swipeThreshold) {
+            // 오른쪽으로 스와이프 -> 이전 이미지
+            onNavigate('prev');
+        }
+
+        touchStartRef.current = null; // 초기화
+    };
+
     useEffect(() => {
         const handleKeyDown = (e: KeyboardEvent) => {
             if (e.key === 'Escape') onClose();
@@ -212,7 +235,8 @@ const Lightbox: React.FC<{
                 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12 19 6.41z"/></svg>
             </button>
             
-            <div className="lightbox-wrapper" onClick={(e) => e.stopPropagation()}>
+            <div className="lightbox-wrapper" onClick={(e) => e.stopPropagation()} onTouchStart={handleTouchStart}
+    onTouchEnd={handleTouchEnd}>
                 <button className="lightbox-nav prev" onClick={() => onNavigate('prev')} aria-label="Previous image">
                     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><path d="M15.41 7.41L14 6l-6 6 6 6 1.41-1.41L10.83 12l4.58-4.59z"/></svg>
                 </button>
