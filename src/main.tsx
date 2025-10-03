@@ -388,7 +388,9 @@ const ProjectDetailPage: React.FC<{
                     <AnimatedSection className="detail-section">
                         <h2>Gallery</h2>
                         <div className="detail-gallery">
-                            {project.gallery.map((img, index) => <img key={index} src={img} alt={`${project.title} gallery image ${index + 1}`} loading="lazy" onClick={() => setLightboxIndex(index)}/>)}
+                            {project.gallery.map((img, index) => <div key={index} className="gallery-image-container" onClick={() => setLightboxIndex(index)}>
+            <img src={img} alt={`${project.title} gallery image ${index + 1}`} loading="lazy" />
+        </div>)}
                         </div>
                     </AnimatedSection>
                 )}

@@ -560,12 +560,20 @@ html, body {
     grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
     gap: 1rem;
 }
-.detail-gallery img {
-    width: 100%;
-    height: auto;
+.gallery-image-container {
     border-radius: var(--border-radius);
-    border: 1px solid var(--border-color);
-    cursor: zoom-in;
+    overflow: hidden; /* 이 부분이 핵심: 틀을 벗어나는 이미지를 숨깁니다. */
+    cursor: pointer;
+}
+.gallery-image-container img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.4s ease-out; /* 부드러운 전환 효과 */
+}
+
+.gallery-image-container:hover img {
+    transform: scale(1.1); /* 컨테이너에 호버하면 이미지가 확대됩니다. */
 }
 
 .detail-nav {
