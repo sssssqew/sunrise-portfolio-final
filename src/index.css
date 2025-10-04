@@ -959,10 +959,13 @@ button:hover, .button-primary:hover {
 }
 
 .lightbox-image-container {
-    flex-grow: 1;
+    width: 100%;
+    height: 100%;
     position: relative;
     overflow: hidden;
-    min-height: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }
 
 .lightbox-background-image {
@@ -981,22 +984,32 @@ button:hover, .button-primary:hover {
     display: flex;
     align-items: center;
     justify-content: center;
-    z-index: 2;
+    z-index: 2; /* UI 요소들보다 뒤에 위치 */
 }
 
+/* [핵심 변경] 이미지가 잘리지 않고, 비율에 맞춰 컨테이너 안에 꽉 차게 표시됩니다. */
 .lightbox-image {
     max-width: 100%;
-    flex-shrink: 0;
-    object-fit: contain;
+    max-height: 100%;
+    object-fit: contain; /* 이 속성이 이미지 잘림을 방지합니다. */
     opacity: 0;
     transition: opacity 0.2s ease-in;
 }
 
 
 .lightbox-caption {
-    color: var(--text-secondary-color);
-    font-size: 1.1rem;
+    position: absolute;
+    bottom: 1.5rem; /* 아래쪽 여백 */
+    left: 50%;
+    transform: translateX(-50%); /* 정확한 중앙 정렬 */
+    background: rgba(0, 0, 0, 0.6);
+    color: var(--text-color);
+    padding: 0.5rem 1rem;
+    border-radius: 20px;
+    font-size: 0.9rem;
     user-select: none;
+    z-index: 2010; /* 다른 UI 요소들 위에 표시 */
+    border: 1px solid rgba(255, 255, 255, 0.1);
 }
 
 .lightbox-close, .lightbox-nav {
@@ -1024,8 +1037,8 @@ button:hover, .button-primary:hover {
 }
 
 .lightbox-close {
-    top: 0.3rem;
-    right: 0.5rem;
+    top: 1.5rem;
+    right: 1.5rem;
     width: 44px;
     height: 44px;
     transform: scale(1);
@@ -1135,8 +1148,8 @@ button:hover, .button-primary:hover {
         right: 0.5rem;
     }
     .lightbox-close {
-        top: 0.5rem;
-        right: 0.5rem;
+        top: 1rem;
+        right: 1rem;
     }
     .lightbox-nav,
     .cinematic-bar {
@@ -1145,7 +1158,7 @@ button:hover, .button-primary:hover {
 
     .lightbox-caption {
         /* 새로운 '알약' 스타일 */
-        position: absolute;
+        /* position: absolute;
         bottom: 1.5rem;
         left: 50%;
         transform: translateX(-50%);
@@ -1153,6 +1166,10 @@ button:hover, .button-primary:hover {
         color: var(--text-color);
         padding: 0.25rem 0.75rem;
         border-radius: 20px;
-        z-index: 3;
+        z-index: 3; */
+
+        bottom: 1rem;
+        font-size: 0.8rem;
+        padding: 0.4rem 0.8rem;
     }
 }

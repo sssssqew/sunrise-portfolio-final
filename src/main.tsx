@@ -205,26 +205,6 @@ const Lightbox: React.FC<{
 
         touchStartRef.current = null; // 초기화
     };
-    // Screen Orientation Lock Effect
-    // useEffect(() => {
-    //     const lockScreen = async () => {
-    //         try {
-    //             if (window.screen && window.screen.orientation && window.screen.orientation.lock) {
-    //                 await window.screen.orientation.lock('portrait-primary');
-    //             }
-    //         } catch (error) {
-    //             console.error("Screen orientation lock failed:", error);
-    //         }
-    //     };
-
-    //     lockScreen();
-
-    //     return () => {
-    //         if (window.screen && window.screen.orientation && window.screen.orientation.unlock) {
-    //             window.screen.orientation.unlock();
-    //         }
-    //     };
-    // }, []); // Runs only when the lightbox opens and closes
 
     useEffect(() => {
         const handleKeyDown = (e: KeyboardEvent) => {
@@ -257,18 +237,17 @@ const Lightbox: React.FC<{
 
     return (
         <div className="lightbox-overlay" onClick={onClose}>
-            <button className="lightbox-close" aria-label="Close image viewer" onClick={onClose}>
-                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12 19 6.41z"/></svg>
-            </button>
-            
             <div className="lightbox-wrapper" onClick={(e) => e.stopPropagation()} onTouchStart={handleTouchStart}
     onTouchEnd={handleTouchEnd}>
+                <button className="lightbox-close" aria-label="Close image viewer" onClick={onClose}>
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12 19 6.41z"/></svg>
+                </button>
                 <button className="lightbox-nav prev" onClick={() => onNavigate('prev')} aria-label="Previous image">
                     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><path d="M15.41 7.41L14 6l-6 6 6 6 1.41-1.41L10.83 12l4.58-4.59z"/></svg>
                 </button>
                 
-                <div className="lightbox-cinematic-container">
-                    <div className="cinematic-bar top"></div>
+                {/* <div className="lightbox-cinematic-container"> */}
+                    {/* <div className="cinematic-bar top"></div> */}
                     <div className="lightbox-image-container">
                         {/* <div
                             className="lightbox-background-image"
@@ -283,10 +262,10 @@ const Lightbox: React.FC<{
                             />
                         </div>
                     </div>
-                    <div className="cinematic-bar bottom">
+                    {/* <div className="cinematic-bar bottom"> */}
                         
-                    </div>
-                </div>
+                    {/* </div>
+                </div> */}
 
                 <button className="lightbox-nav next" onClick={() => onNavigate('next')} aria-label="Next image">
                     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><path d="M8.59 16.59L13.17 12 8.59 7.41 10 6l6 6-6 6-1.41-1.41z"/></svg>
