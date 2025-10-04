@@ -1110,7 +1110,7 @@ button:hover, .button-primary:hover {
 }
 
 /* Responsive */
-@media (max-width: 768px) {
+@media (hover: none) and (pointer: coarse) {
     .header .container {
         flex-direction: column;
         gap: 1rem;
