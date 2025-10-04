@@ -264,7 +264,7 @@ const Lightbox: React.FC<{
                     </div>
                     {/* <div className="cinematic-bar bottom"> */}
                         
-                    {/* </div>
+                    {/* </div>  
                 </div> */}
 
                 <button className="lightbox-nav next" onClick={() => onNavigate('next')} aria-label="Next image">
@@ -392,7 +392,7 @@ const ProjectDetailPage: React.FC<{
                 // 화면 방향 잠금 해제를 시도하기 전에, 현재 기기가 모바일 환경인지 다시 한번 확인합니다.
             // 화면 방향 잠금은 모바일에서만 발생했으므로, 해제 역시 모바일에서만 시도하는 것이
             // 가장 안전하고 논리적으로 명확합니다.
-                const isMobile = window.matchMedia("(max-width: 768px)").matches;
+                const isMobile = window.matchMedia('(pointer: coarse)').matches; // 디바이스 크기가 아니라 터치기기인지로 모바일인지 판단. 모바일이더라도 가로모드는 768px 보다 클수 있기 때문
                 if (isMobile && screen.orientation?.unlock) {
                     screen.orientation.unlock(); // 세로모드로 전환
                 }
@@ -414,7 +414,7 @@ const ProjectDetailPage: React.FC<{
     // [기능 1] 갤러리 이미지를 클릭했을 때 가로 모드로 전환하는 함수
     const openLightbox = async (index: number) => {
         // 모바일 환경(가로 768px 이하)인지 확인합니다.
-        const isMobile = window.matchMedia("(max-width: 768px)").matches;
+        const isMobile = window.matchMedia('(pointer: coarse)').matches;
         if (isMobile) {
             try {
                 // 전체 화면 모드로 전환을 요청합니다.
