@@ -353,6 +353,29 @@ const AnimatedSection: React.FC<{children: React.ReactNode, className?: string}>
     return <div ref={ref} className={`${className || ''} animated-section ${isVisible ? 'visible' : ''}`}>{children}</div>;
 };
 
+// 파일: index.tsx
+
+// [핵심 변경] 스크롤에 따라 개별 이미지를 애니메이션하기 위해 새로 추가된 컴포넌트입니다.
+const AnimatedGalleryImage: React.FC<{
+    src: string;
+    alt: string;
+    onClick: () => void;
+}> = ({ src, alt, onClick }) => {
+    // useAnimatedVisibility 훅을 사용하여 이미지가 화면에 보이는지 감지합니다.
+    const [ref, isVisible] = useAnimatedVisibility<HTMLDivElement>();
+
+    return (
+        // 이미지를 div로 감싸고, isVisible 값에 따라 'visible' 클래스를 동적으로 추가합니다.
+        <div
+            ref={ref}
+            className={`gallery-image-wrapper ${isVisible ? 'visible' : ''}`}
+            onClick={onClick}
+        >
+            <img src={src} alt={alt} loading="lazy" />
+        </div>
+    );
+};
+
 const ProjectDetailPage: React.FC<{
     project: Project;
     onClose: () => void;
@@ -506,9 +529,14 @@ const ProjectDetailPage: React.FC<{
                     <AnimatedSection className="detail-section">
                         <h2>Gallery</h2>
                         <div className="detail-gallery">
-                            {project.gallery.map((img, index) => <div key={index} className="gallery-image-container" onClick={() => openLightbox(index)}>
-            <img src={img} alt={`${project.title} gallery image ${index + 1}`} loading="lazy" />
-        </div>)}
+                            {project.gallery.map((img, index) => 
+                                <AnimatedGalleryImage
+                                    key={index}
+                                    src={img}
+                                    alt={`${project.title} gallery image ${index + 1}`}
+                                    onClick={() => openLightbox(index)}
+                                />)
+                                }
                         </div>
                     </AnimatedSection>
                 )}
