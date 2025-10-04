@@ -363,6 +363,23 @@ const ProjectDetailPage: React.FC<{
         window.scrollTo(0, 0);
     }, [project]);
 
+    // 라이트박스의 상태에 따라 body의 스크롤을 제어하는 useEffect 훅입니다.
+    useEffect(() => {
+        if (lightboxIndex !== null) {
+            // 라이트박스가 열리면 body의 overflow를 hidden으로 설정하여 배경 스크롤을 막습니다.
+            document.body.style.overflow = 'hidden';
+        } else {
+            // 라이트박스가 닫히면 body의 overflow 스타일을 원래대로 되돌려 스크롤을 다시 허용합니다.
+            document.body.style.overflow = '';
+        }
+
+        // 컴포넌트가 언마운트될 때(예: 다른 페이지로 이동 시) 스크롤이 잠겨있는 상태로 남지 않도록
+        // 반드시 원래대로 되돌리는 cleanup 함수를 포함합니다.
+        return () => {
+            document.body.style.overflow = '';
+        };
+    }, [lightboxIndex]); // lightboxIndex 상태가 변경될 때마다 이 효과가 실행됩니다.
+
     // [기능 2] 라이트박스를 닫는 함수입니다. ('X' 버튼이나 배경 클릭 시 호출)
     // 이 함수의 역할을 명확하게 분리하여 안정성을 높였습니다.
     const closeLightbox = useCallback(() => {
