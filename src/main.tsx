@@ -1,11 +1,11 @@
-// declare global {
-//   interface ScreenOrientation extends EventTarget {
-//     lock(orientation: 'portrait-primary'): Promise<void>;
-//     unlock(): void;
-//   }
-// }
+declare global {
+  interface ScreenOrientation {
+    lock(orientation: string): Promise<void>;
+    unlock(): void;
+  }
+}
 
-import React, { useState, useEffect, useMemo, useRef } from 'react';
+import React, { useState, useEffect, useMemo, useRef, useCallback } from 'react';
 import { createRoot } from 'react-dom/client';
 import './index.css';
 
@@ -384,6 +384,67 @@ const ProjectDetailPage: React.FC<{
         window.scrollTo(0, 0);
     }, [project]);
 
+    // [기능 2] 라이트박스를 닫고 화면을 원래대로 복구하는 함수
+    const closeLightbox = useCallback(() => {
+        const isMobile = window.matchMedia("(max-width: 768px)").matches;
+        if (isMobile) {
+            try {
+                // 화면 방향 잠금을 해제합니다.
+                if (screen.orientation && screen.orientation.unlock) {
+                    screen.orientation.unlock();
+                }
+                // 전체 화면 모드를 종료합니다.
+                if (document.fullscreenElement && document.exitFullscreen) {
+                    document.exitFullscreen();
+                }
+            } catch (err) {
+                 console.warn("Could not unlock orientation or exit fullscreen:", err);
+            }
+        }
+        // 라이트박스 상태를 닫힘으로 변경합니다.
+        setLightboxIndex(null);
+    }, []);
+
+    // [기능 3] 사용자가 ESC 키 등으로 수동으로 전체 화면을 종료하는 경우를 처리
+    useEffect(() => {
+        const handleFullscreenChange = () => {
+            // 라이트박스가 열려있는 상태에서, 전체 화면 상태가 아니라면
+            // 사용자가 수동으로 종료한 것이므로 라이트박스를 닫습니다.
+            if (lightboxIndex !== null && !document.fullscreenElement) {
+                closeLightbox();
+            }
+        };
+
+        document.addEventListener('fullscreenchange', handleFullscreenChange);
+
+        return () => {
+            document.removeEventListener('fullscreenchange', handleFullscreenChange);
+        };
+    }, [lightboxIndex, closeLightbox]);
+
+    // [기능 1] 갤러리 이미지를 클릭했을 때 가로 모드로 전환하는 함수
+    const openLightbox = async (index: number) => {
+        // 모바일 환경(가로 768px 이하)인지 확인합니다.
+        const isMobile = window.matchMedia("(max-width: 768px)").matches;
+        if (isMobile) {
+            try {
+                // 전체 화면 모드로 전환을 요청합니다.
+                if (document.documentElement.requestFullscreen) {
+                    await document.documentElement.requestFullscreen();
+                }
+                // 화면 방향을 '가로(landscape)'로 고정하도록 요청합니다.
+                if (screen.orientation && screen.orientation.lock) {
+                    await screen.orientation.lock('landscape');
+                }
+            } catch (err) {
+                console.warn("Could not enter fullscreen or lock orientation:", err);
+            }
+        }
+        // 라이트박스 상태를 열림으로 변경하여 이미지를 표시합니다.
+        setLightboxIndex(index);
+    };
+
+    // 라이트박스 내에서 이전/다음 이미지로 이동하는 함수
     const handleLightboxNavigate = (direction: 'prev' | 'next') => {
         if (lightboxIndex === null || !project.gallery?.length) return;
         const gallerySize = project.gallery.length;
@@ -439,7 +500,7 @@ const ProjectDetailPage: React.FC<{
                     <AnimatedSection className="detail-section">
                         <h2>Gallery</h2>
                         <div className="detail-gallery">
-                            {project.gallery.map((img, index) => <div key={index} className="gallery-image-container" onClick={() => setLightboxIndex(index)}>
+                            {project.gallery.map((img, index) => <div key={index} className="gallery-image-container" onClick={() => openLightbox(index)}>
             <img src={img} alt={`${project.title} gallery image ${index + 1}`} loading="lazy" />
         </div>)}
                         </div>
@@ -461,7 +522,7 @@ const ProjectDetailPage: React.FC<{
                 <Lightbox
                     images={project.gallery}
                     currentIndex={lightboxIndex}
-                    onClose={() => setLightboxIndex(null)}
+                    onClose={() => closeLightbox}
                     onNavigate={handleLightboxNavigate}
                 />
             )}
