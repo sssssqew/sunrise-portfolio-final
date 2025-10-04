@@ -522,7 +522,7 @@ const ProjectDetailPage: React.FC<{
                 <Lightbox
                     images={project.gallery}
                     currentIndex={lightboxIndex}
-                    onClose={() => closeLightbox}
+                    onClose={closeLightbox}
                     onNavigate={handleLightboxNavigate}
                 />
             )}
