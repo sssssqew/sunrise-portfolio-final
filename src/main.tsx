@@ -384,43 +384,53 @@ const ProjectDetailPage: React.FC<{
         window.scrollTo(0, 0);
     }, [project]);
 
-    // [기능 2] 라이트박스를 닫고 화면을 원래대로 복구하는 함수
+    // [기능 2] 라이트박스를 닫는 함수입니다. ('X' 버튼이나 배경 클릭 시 호출)
+    // 이 함수의 역할을 명확하게 분리하여 안정성을 높였습니다.
     const closeLightbox = useCallback(() => {
-        const isMobile = window.matchMedia("(max-width: 768px)").matches;
-        if (isMobile) {
-            try {
-                // 화면 방향 잠금을 해제합니다.
-                if (screen.orientation && screen.orientation.unlock) {
-                    screen.orientation.unlock();
-                }
-                // 전체 화면 모드를 종료합니다.
-                if (document.fullscreenElement && document.exitFullscreen) {
-                    document.exitFullscreen();
-                }
-            } catch (err) {
-                 console.warn("Could not unlock orientation or exit fullscreen:", err);
-            }
+        // 모바일에서 가로 모드로 전환된 상태(즉, 전체 화면 상태)일 경우,
+        // 브라우저에 전체 화면 종료를 '요청'하기만 합니다.
+        // 실제 화면 방향을 되돌리고 라이트박스를 닫는 작업(뒷정리)은 아래 useEffect의
+        // 'fullscreenchange' 이벤트 핸들러가 일관되게 처리합니다.
+        if (document.fullscreenElement) {
+            document.exitFullscreen().catch(err => console.warn("전체 화면 종료에 실패했습니다:", err));
+        } else {
+            // 전체 화면 모드가 아닌 경우 (예: 데스크탑에서 라이트박스를 열었을 때),
+            // 이벤트 리스너를 기다릴 필요 없이 바로 라이트박스를 닫습니다.
+            setLightboxIndex(null);
         }
-        // 라이트박스 상태를 닫힘으로 변경합니다.
-        setLightboxIndex(null);
-    }, []);
+    }, []); // 의존성이 없으므로 컴포넌트가 처음 렌더링될 때 한 번만 생성됩니다.
 
     // [기능 3] 사용자가 ESC 키 등으로 수동으로 전체 화면을 종료하는 경우를 처리
+    // [핵심 변경] 'fullscreenchange' 이벤트를 감지하여 뒷정리를 담당하는 부분입니다.
+    // 이 로직 덕분에 사용자가 'X' 버튼을 누르든, 스마트폰의 '뒤로 가기' 버튼을 누르든
+    // 모든 전체 화면 종료 상황에서 동일하고 안정적인 처리가 보장됩니다.
     useEffect(() => {
         const handleFullscreenChange = () => {
-            // 라이트박스가 열려있는 상태에서, 전체 화면 상태가 아니라면
-            // 사용자가 수동으로 종료한 것이므로 라이트박스를 닫습니다.
+            // 이벤트가 발생했을 때, 라이트박스가 열려있는 상태인데(lightboxIndex !== null)
+            // 전체 화면이 아니라면(!document.fullscreenElement), 사용자가 전체 화면을 종료한 것입니다.
             if (lightboxIndex !== null && !document.fullscreenElement) {
-                closeLightbox();
+                // 1. 화면 방향 잠금을 해제하여 원래대로(세로 모드) 되돌립니다.
+                // 화면 방향 잠금 해제를 시도하기 전에, 현재 기기가 모바일 환경인지 다시 한번 확인합니다.
+            // 화면 방향 잠금은 모바일에서만 발생했으므로, 해제 역시 모바일에서만 시도하는 것이
+            // 가장 안전하고 논리적으로 명확합니다.
+                const isMobile = window.matchMedia("(max-width: 768px)").matches;
+                if (isMobile && screen.orientation?.unlock) {
+                    screen.orientation.unlock(); // 세로모드로 전환
+                }
+                // 2. 라이트박스 상태를 null로 변경하여 화면에서 숨깁니다.
+                setLightboxIndex(null);
             }
         };
 
+        // 이벤트 리스너를 등록합니다.
         document.addEventListener('fullscreenchange', handleFullscreenChange);
 
+        // 컴포넌트가 사라질 때 이벤트 리스너를 꼭 제거하여 메모리 누수를 방지합니다.
         return () => {
             document.removeEventListener('fullscreenchange', handleFullscreenChange);
         };
-    }, [lightboxIndex, closeLightbox]);
+        // lightboxIndex가 변경될 때마다 이 effect를 재실행하여 핸들러가 최신 상태를 참조하도록 합니다.
+    }, [lightboxIndex]);
 
     // [기능 1] 갤러리 이미지를 클릭했을 때 가로 모드로 전환하는 함수
     const openLightbox = async (index: number) => {
