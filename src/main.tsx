@@ -1002,8 +1002,13 @@ const App: React.FC = () => {
             return <div className="loading-fullscreen">Loading Portfolio...</div>;
         }
 
+        // project.id를 key로 전달하여 프로젝트가 변경될 때마다
+        // ProjectDetailPage 컴포넌트가 완전히 새로 마운트되도록 합니다.
+        // 이렇게 하면 스크롤 위치나 애니메이션 상태가 이전 페이지의 영향을 받지 않고
+        // 항상 깨끗하게 초기화되어 문제가 해결됩니다.
         if (selectedProject) {
             return <ProjectDetailPage 
+                        key={selectedProject.id} // 프로젝트가 변경될때마다 페이지를 새로 그리고 애니메이션도 다시 시작함
                         project={selectedProject} 
                         onClose={() => setSelectedProjectId(null)}
                         onNavigate={handleNavigateProject}
