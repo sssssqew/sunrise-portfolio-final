@@ -861,6 +861,36 @@ button:hover, .button-primary:hover {
     margin-top: 1rem;
     color: var(--primary-color);
 }
+.admin-category-list {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    margin-bottom: 1.5rem;
+}
+
+.admin-category-item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0.75rem 1rem;
+    background-color: var(--background-color);
+    border: 1px solid var(--border-color);
+    border-radius: var(--border-radius);
+}
+
+.admin-category-item .icon-button.delete svg {
+    width: 18px;
+    height: 18px;
+}
+
+.admin-category-add {
+    display: flex;
+    gap: 1rem;
+}
+
+.admin-category-add input {
+    flex-grow: 1;
+}
 
 /* --- Confirmation Modal --- */
 .modal-overlay {

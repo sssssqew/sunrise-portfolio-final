@@ -90,7 +90,8 @@ const Header: React.FC<{
     activePage: string;
     setActivePage: (page: string) => void;
     isProjectOpen: boolean;
-}> = ({ activePage, setActivePage, isProjectOpen }) => {
+    projectTypes: string[];
+}> = ({ activePage, setActivePage, isProjectOpen, projectTypes }) => {
     return (
         <header className={`header ${isProjectOpen ? 'hidden' : ''}`}>
             <div className="container">
@@ -99,9 +100,7 @@ const Header: React.FC<{
                 </div>
                 <nav>
                     <ul>
-                        <li className={activePage === 'Frontend' ? 'active' : ''} onClick={() => setActivePage('Frontend')}>Frontend</li>
-                        <li className={activePage === 'UX Design' ? 'active' : ''} onClick={() => setActivePage('UX Design')}>UX Design</li>
-                        <li className={activePage === 'AI Creations' ? 'active' : ''} onClick={() => setActivePage('AI Creations')}>AI Creations</li>
+                        {projectTypes.map(type => (<li key={type} className={activePage === type ? 'active' : ''} onClick={() => setActivePage(type)}>{type}</li>))}
                         <li className={activePage === 'About' ? 'active' : ''} onClick={() => setActivePage('About')}>About Me</li>
                     </ul>
                 </nav>
@@ -640,7 +639,8 @@ const ProjectForm: React.FC<{
     project?: Project;
     onSave: (project: Project) => void;
     onCancel: () => void;
-}> = ({ project, onSave, onCancel }) => {
+    projectTypes: string[];
+}> = ({ project, onSave, onCancel, projectTypes }) => {
     const [formData, setFormData] = useState<Omit<Project, 'id' | 'date'>>({
         title: project?.title || '',
         type: project?.type || 'Frontend',
@@ -705,9 +705,9 @@ const ProjectForm: React.FC<{
             <div className="form-group">
                 <label>Type</label>
                 <select name="type" value={formData.type} onChange={handleChange}>
-                    <option value="Frontend">Frontend</option>
-                    <option value="UX Design">UX Design</option>
-                    <option value="AI Creations">AI Creations</option>
+                    {projectTypes.map(type => (
+                        <option key={type} value={type}>{type}</option>
+                    ))}
                 </select>
             </div>
              <div className="form-group">
@@ -777,12 +777,16 @@ const AdminDashboard: React.FC<{
     setProjects: (projects: Project[] | ((p: Project[]) => Project[])) => void;
     setAdminPassword: (password: string) => void;
     setLoggedIn: (loggedIn: boolean) => void;
-}> = ({ projects, setProjects, setAdminPassword, setLoggedIn }) => {
+    projectTypes: string[];
+    setProjectTypes: (types: string[] | ((t: string[]) => string[])) => void;
+}> = ({ projects, setProjects, setAdminPassword, setLoggedIn, projectTypes, setProjectTypes }) => {
     const [editingProject, setEditingProject] = useState<Project | null | 'new'>(null);
     const [projectToDelete, setProjectToDelete] = useState<Project | null>(null);
+    const [categoryToDelete, setCategoryToDelete] = useState<string | null>(null);
     const [newPassword, setNewPassword] = useState('');
     const [confirmPassword, setConfirmPassword] = useState('');
     const [passwordMessage, setPasswordMessage] = useState('');
+    const [newCategory, setNewCategory] = useState('');
     const dragItem = useRef<number | null>(null);
     const dragOverItem = useRef<number | null>(null);
 
@@ -860,6 +864,35 @@ const AdminDashboard: React.FC<{
         linkElement.click();
     };
 
+    const handleAddCategory = () => {
+        const trimmedCategory = newCategory.trim();
+        if (!trimmedCategory) { // 빈 이름은 추가하지 않음
+            alert('Category name cannot be empty.');
+            return;
+        }
+        if (projectTypes.some(pt => pt.toLowerCase() === trimmedCategory.toLowerCase())) { // 중복 이름은 추가하지 않음
+            alert('This category already exists.');
+            return;
+        }
+        setProjectTypes(prev => [...prev, trimmedCategory]); // 상태 업데이트
+        setNewCategory('');
+    };
+
+    const handleDeleteCategoryConfirmed = () => {
+        if (!categoryToDelete) return;
+
+        // 카테고리를 사용하는 프로젝트가 있는지 확인하여 실수를 방지합니다.
+        const isUsed = projects.some(p => p.type === categoryToDelete);
+        if (isUsed) {
+            alert(`Cannot delete "${categoryToDelete}" because it is currently used by one or more projects.`);
+            setCategoryToDelete(null);
+            return;
+        }
+
+        setProjectTypes(prev => prev.filter(pt => pt !== categoryToDelete)); // 상태 업데이트
+        setCategoryToDelete(null);
+    };
+
 
     if (editingProject) {
         return (
@@ -868,6 +901,7 @@ const AdminDashboard: React.FC<{
                     project={editingProject === 'new' ? undefined : editingProject}
                     onSave={handleSaveProject}
                     onCancel={() => setEditingProject(null)}
+                    projectTypes={projectTypes}
                 />
             </main>
         );
@@ -891,7 +925,7 @@ const AdminDashboard: React.FC<{
                     </div>
                 </div>
                 
-                <div className="admin-projects-list">
+                <div className="admin-section">
                     <h3>Manage Projects</h3>
                     {projects.map((p, index) => (
                         <div 
@@ -933,6 +967,37 @@ const AdminDashboard: React.FC<{
                     ))}
                 </div>
 
+                <div className="admin-section">
+                    <h3>Manage Categories</h3>
+                    {/* 현재 카테고리 목록을 보여주고, 각 항목마다 삭제 버튼을 만듭니다. */}
+                    <div className="admin-category-list">
+                        {projectTypes.map(type => (
+                            <div key={type} className="admin-category-item">
+                                <span>{type}</span>
+                                <button
+                                    onClick={() => setCategoryToDelete(type)}
+                                    className="icon-button delete"
+                                    title="Delete Category"
+                                    aria-label={`Delete category ${type}`}
+                                >
+                                    {/* 삭제 아이콘 SVG */}
+                                </button>
+                            </div>
+                        ))}
+                    </div>
+                    {/* 새로운 카테고리를 입력하는 input과 추가 버튼입니다. */}
+                    <div className="admin-category-add">
+                        <input
+                            type="text"
+                            value={newCategory}
+                            onChange={e => setNewCategory(e.target.value)}
+                            placeholder="New category name"
+                            onKeyDown={e => e.key === 'Enter' && handleAddCategory()}
+                        />
+                        <button onClick={handleAddCategory}>Add Category</button>
+                    </div>
+                </div>
+
                 <div className="admin-password-change">
                     <h3>Change Password</h3>
                     <form onSubmit={handleChangePassword}>
@@ -943,6 +1008,15 @@ const AdminDashboard: React.FC<{
                     {passwordMessage && <p className="password-message">{passwordMessage}</p>}
                 </div>
             </main>
+
+            <ConfirmationModal
+                isOpen={!!categoryToDelete}
+                onClose={() => setCategoryToDelete(null)}
+                onConfirm={handleDeleteCategoryConfirmed}
+                title="Confirm Category Deletion"
+            >
+                {categoryToDelete && <p>Are you sure you want to delete the category "{categoryToDelete}"? This action cannot be undone.</p>}
+            </ConfirmationModal>
 
             <ConfirmationModal
                 isOpen={!!projectToDelete}
@@ -962,8 +1036,9 @@ const App: React.FC = () => {
     const [projects, setProjects] = useState<Project[]>([]);
     const [isLoading, setIsLoading] = useState(true);
     const [adminPassword, setAdminPassword] = useLocalStorage<string>('admin-password', '0000');
+    const [projectTypes, setProjectTypes] = useLocalStorage<string[]>('project-types', ['Frontend', 'UX Design', 'AI Creations']);
     const [loggedIn, setLoggedIn] = useState(() => !!sessionStorage.getItem('admin-logged-in'));
-    const [activePage, setActivePage] = useState('Frontend');
+    const [activePage, setActivePage] = useState(projectTypes[0] || 'About');
     const [selectedProjectId, setSelectedProjectId] = useState<string | null>(null);
 
     useEffect(() => {
@@ -984,6 +1059,13 @@ const App: React.FC = () => {
                 setIsLoading(false);
             });
     }, []);
+
+    // When projectTypes from localStorage changes, ensure activePage is still valid
+    useEffect(() => {
+        if (!loggedIn && !projectTypes.includes(activePage) && activePage !== 'About' && activePage !== 'AdminLogin' && activePage !== 'Admin') {
+            setActivePage(projectTypes[0] || 'About');
+        }
+    }, [projectTypes, activePage, loggedIn]);
 
     const selectedProject = useMemo(() => {
         return projects.find(p => p.id === selectedProjectId) || null;
@@ -1031,6 +1113,8 @@ const App: React.FC = () => {
                         setProjects={setProjects}
                         setAdminPassword={setAdminPassword}
                         setLoggedIn={setLoggedIn}
+                        projectTypes={projectTypes}
+                        setProjectTypes={setProjectTypes}
                     />;
         }
 
@@ -1062,7 +1146,7 @@ const App: React.FC = () => {
 
     return (
         <>
-            <Header activePage={activePage} setActivePage={setActivePage} isProjectOpen={!!selectedProject} />
+            <Header activePage={activePage} setActivePage={setActivePage} isProjectOpen={!!selectedProject} projectTypes={projectTypes}/>
             {renderPage()}
         </>
     );
