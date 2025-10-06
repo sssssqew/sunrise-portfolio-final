@@ -569,22 +569,30 @@ const AboutPage: React.FC = () => {
         <main className="container page-content">
            <AnimatedSection className="about-page">
              <div className="about-content">
-                 <img src="https://images.unsplash.com/photo-1531297484001-80022131f5a1?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3wzOT二次MDd8MHwxfHNlYXJjaHwxfHxwb3J0Zm9saW8lMjB3ZWJzaXRlfGVufDB8fHx8MTcxNzI3NzAzNHww&ixlib=rb-4.0.3&q=80&w=1080" alt="John Doe" className="about-photo" />
+                 <div className="about-img">
+                    <img src="https://raw.githubusercontent.com/sssssqew/product-design-portfolio/refs/heads/main/imgs/profile/profile-img.png" alt="John Doe" className="about-photo" />
+                 </div>
                 <div className="about-text">
                     <h1>About Me</h1>
                     <p>
-                        I am a passionate and creative Frontend Developer and UX Designer with a decade of experience in building beautiful, functional, and user-centered digital experiences. My expertise lies at the intersection of design and technology, where I strive to create intuitive interfaces that not only look stunning but also perform flawlessly.
+                        {/* I am a passionate and creative Frontend Developer and UX Designer with a decade of experience in building beautiful, functional, and user-centered digital experiences. My expertise lies at the intersection of design and technology, where I strive to create intuitive interfaces that not only look stunning but also perform flawlessly. */}
+                        I am a passionate and creative Frontend Developer and UX Designer, eager to build impactful digital experiences. With a strong foundation in frontend development (1 year of dedicated experience) enriched by 2 years as a web development instructor and 6 months of product design study abroad, my expertise naturally bridges the gap between design and technology.
                     </p>
                     <p>
-                        From initial user research and wireframing to high-fidelity prototypes and pixel-perfect code, I manage the entire product design lifecycle. I thrive in collaborative environments and am dedicated to solving complex problems with elegant solutions.
+                        {/* From initial user research and wireframing to high-fidelity prototypes and pixel-perfect code, I manage the entire product design lifecycle. I thrive in collaborative environments and am dedicated to solving complex problems with elegant solutions. */}
+                        My goal is to craft beautiful, functional, and user-centered interfaces that not only look stunning but also perform flawlessly. I bring a comprehensive understanding of the product design lifecycle, from user research and wireframing to high-fidelity prototypes and meticulous code implementation. I value collaborative environments and am driven to deliver elegant solutions for complex challenges.
                     </p>
                     <h3>Core Skills</h3>
                     <ul>
                         <li>UI/UX Design & Research</li>
                         <li>Responsive Web Design</li>
-                        <li>Frontend Development (React, TypeScript, Vue)</li>
+                        <li>Frontend Development (React, JavaScript)</li>
                         <li>Interaction Design & Prototyping</li>
-                        <li>Design Systems & Component Libraries</li>
+                        <li>Component-Based Design (Figma)</li>
+                        <li>Web Accessibility</li>
+                        <li>Web Performance Optimization</li>
+                        <li>Complex API Integration & Backend Connectivity</li>
+                        <li>AI Tools for Design & Content</li>
                     </ul>
                 </div>
             </div>
