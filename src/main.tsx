@@ -11,7 +11,7 @@ import './index.css';
 
 // --- DATA & TYPES --- //
 
-type ProjectType = 'Frontend' | 'UX Design';
+type ProjectType = 'Frontend' | 'UX Design' | 'AI Creations';
 
 interface Project {
   id: string;
@@ -101,6 +101,7 @@ const Header: React.FC<{
                     <ul>
                         <li className={activePage === 'Frontend' ? 'active' : ''} onClick={() => setActivePage('Frontend')}>Frontend</li>
                         <li className={activePage === 'UX Design' ? 'active' : ''} onClick={() => setActivePage('UX Design')}>UX Design</li>
+                        <li className={activePage === 'AI Creations' ? 'active' : ''} onClick={() => setActivePage('AI Creations')}>AI Creations</li>
                         <li className={activePage === 'About' ? 'active' : ''} onClick={() => setActivePage('About')}>About Me</li>
                     </ul>
                 </nav>
@@ -706,6 +707,7 @@ const ProjectForm: React.FC<{
                 <select name="type" value={formData.type} onChange={handleChange}>
                     <option value="Frontend">Frontend</option>
                     <option value="UX Design">UX Design</option>
+                    <option value="AI Creations">AI Creations</option>
                 </select>
             </div>
              <div className="form-group">
@@ -1037,6 +1039,8 @@ const App: React.FC = () => {
                 return <PortfolioPage projects={projects} type="Frontend" onProjectSelect={setSelectedProjectId} />;
             case 'UX Design':
                 return <PortfolioPage projects={projects} type="UX Design" onProjectSelect={setSelectedProjectId}/>;
+            case 'AI Creations':
+                return <PortfolioPage projects={projects} type="AI Creations" onProjectSelect={setSelectedProjectId}/>;
             case 'About':
                 return <AboutPage />;
             case 'AdminLogin':
