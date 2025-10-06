@@ -1119,18 +1119,16 @@ const App: React.FC = () => {
         }
 
         switch (activePage) {
-            case 'Frontend':
-                return <PortfolioPage projects={projects} type="Frontend" onProjectSelect={setSelectedProjectId} />;
-            case 'UX Design':
-                return <PortfolioPage projects={projects} type="UX Design" onProjectSelect={setSelectedProjectId}/>;
-            case 'AI Creations':
-                return <PortfolioPage projects={projects} type="AI Creations" onProjectSelect={setSelectedProjectId}/>;
             case 'About':
                 return <AboutPage />;
             case 'AdminLogin':
                 return <AdminLogin setLoggedIn={setLoggedIn} adminPassword={adminPassword} />;
             default:
-                return <PortfolioPage projects={projects} type="Frontend" onProjectSelect={setSelectedProjectId}/>;
+                if (projectTypes.includes(activePage)) {
+                    return <PortfolioPage projects={projects} type={activePage} onProjectSelect={setSelectedProjectId} />;
+                }
+                // Fallback for unknown pages, defaulting to the first category
+                return <PortfolioPage projects={projects} type={projectTypes[0] || ''} onProjectSelect={setSelectedProjectId}/>;
         }
     };
     
