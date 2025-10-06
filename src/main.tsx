@@ -11,12 +11,11 @@ import './index.css';
 
 // --- DATA & TYPES --- //
 
-type ProjectType = 'Frontend' | 'UX Design' | 'AI Creations';
 
 interface Project {
   id: string;
   title: string;
-  type: ProjectType;
+  type: string;
   imageUrl: string;
   duration: string; // e.g., "3 Weeks"
   difficulty: 'Easy' | 'Medium' | 'Hard' | 'Expert';
@@ -280,7 +279,7 @@ const Lightbox: React.FC<{
 
 // --- PAGES / VIEWS --- //
 
-const PortfolioPage: React.FC<{ projects: Project[], type: ProjectType, onProjectSelect: (id: string) => void }> = ({ projects, type, onProjectSelect }) => {
+const PortfolioPage: React.FC<{ projects: Project[], type: string, onProjectSelect: (id: string) => void }> = ({ projects, type, onProjectSelect }) => {
     const [searchTerm, setSearchTerm] = useState('');
     const [selectedTags, setSelectedTags] = useState<string[]>([]);
     const [sortOrder, setSortOrder] = useState<'date-desc' | 'date-asc' | 'title-asc' | 'title-desc'>('date-desc');
