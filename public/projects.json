@@ -27,7 +27,13 @@
       "Iterative Visual Generation (Whisk)"
     ],
     "challenges": "Iterative AI Generation for Visual Fidelity:\nOvercoming inherent AI limitations in generating precise or ideal visual assets (images and video) required extensive iterative regeneration and meticulous human review, leading to significant time investment in securing suitable and high-quality visual content.\n\nAbstract Scientific Concept Visualization:\nRepresenting abstract scientific and chemical concepts, such as the neurological impact of menthol, posed a considerable challenge in terms of developing compelling and comprehensible visual metaphors for a lay audience.\n\nSeamless Subtitle & Narrative Synchronization:\nEnsuring seamless synchronization and contextual accuracy of subtitles with the video's dynamic narrative flow and pacing proved demanding, requiring precise linguistic and timing adjustments during post-production to enhance viewer comprehension.",
-    "gallery": [],
+    "gallery": [
+      "https://raw.githubusercontent.com/sssssqew/product-design-portfolio/refs/heads/main/imgs/scientific-video/1.PNG",
+      "https://raw.githubusercontent.com/sssssqew/product-design-portfolio/refs/heads/main/imgs/scientific-video/2.PNG",
+      "https://raw.githubusercontent.com/sssssqew/product-design-portfolio/refs/heads/main/imgs/scientific-video/3.PNG",
+      "https://raw.githubusercontent.com/sssssqew/product-design-portfolio/refs/heads/main/imgs/scientific-video/4.PNG",
+      "https://raw.githubusercontent.com/sssssqew/product-design-portfolio/refs/heads/main/imgs/scientific-video/5.PNG"
+    ],
     "id": "1759911374500",
     "date": "2025-10-08"
   },
