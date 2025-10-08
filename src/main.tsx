@@ -28,6 +28,19 @@ interface Project {
   process: string[];
   challenges: string;
   gallery: string[];
+  links?: {
+    github?: string;
+    liveDemo?: string;
+    youtube?: string;
+  };
+}
+
+interface SocialLinks {
+    youtube: string;
+    linkedin: string;
+    github: string;
+    blog: string;
+    email: string;
 }
 
 // --- UTILITY HOOKS & FUNCTIONS --- //
@@ -495,6 +508,28 @@ const ProjectDetailPage: React.FC<{
                     <div className="hero-content">
                         <h1>{project.title}</h1>
                         {/* <p>{project.outcome}</p> */}
+                        {project.links && (project.links.github || project.links.liveDemo || project.links.youtube) && (
+                            <div className="project-links">
+                                {project.links.github && (
+                                    <a href={project.links.github} target="_blank" rel="noopener noreferrer">
+                                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><path d="M12 1.27a11 11 0 00-3.48 21.46c.55.1.73-.24.73-.53v-1.84c-3.03.65-3.67-1.47-3.67-1.47a2.89 2.89 0 00-1.2-1.59c-1-.68.08-.67.08-.67a2.28 2.28 0 011.66 1.12 2.33 2.33 0 003.19.91 2.28 2.28 0 01.68-1.42c-2.43-.28-5-1.18-5-5.42a4.24 4.24 0 011.12-2.95 3.93 3.93 0 01.1-2.9s.92-.3 3 1.12a10.2 10.2 0 015.48 0c2.1-1.42 3-1.12 3-1.12a3.93 3.93 0 01.1 2.9 4.24 4.24 0 011.12 2.95c0 4.25-2.55 5.14-5 5.42a2.6 2.6 0 01.73 2.02v3c0 .29.18.63.73.53A11 11 0 0012 1.27z"></path></svg>
+                                        GitHub Repo
+                                    </a>
+                                )}
+                                {project.links.liveDemo && (
+                                    <a href={project.links.liveDemo} target="_blank" rel="noopener noreferrer">
+                                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><path d="M19 4H5c-1.11 0-2 .9-2 2v12c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm-1 14H6c-.55 0-1-.45-1-1V9h14v8c0 .55-.45 1-1 1zm1-11H5V7c0-.55.45-1 1-1h12c.55 0 1 .45 1 1v2z"></path></svg>
+                                        Live Demo
+                                    </a>
+                                )}
+                                {project.links.youtube && (
+                                    <a href={project.links.youtube} target="_blank" rel="noopener noreferrer">
+                                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><path d="M21.58 7.19c-.23-.86-.9-1.52-1.76-1.76C18.25 5 12 5 12 5s-6.25 0-7.82.43c-.86.24-1.53.9-1.76 1.76C2 8.76 2 12 2 12s0 3.24.43 4.81c.23.86.9 1.52 1.76 1.76C5.75 19 12 19 12 19s6.25 0 7.82-.43c.86-.24 1.53.9 1.76-1.76C22 15.24 22 12 22 12s0-3.24-.42-4.81zM10 15.46V8.54L15.2 12 10 15.46z"></path></svg>
+                                        YouTube
+                                    </a>
+                                )}
+                            </div>
+                        )}
                     </div>
                 </header>
             </AnimatedSection>
@@ -563,13 +598,22 @@ const ProjectDetailPage: React.FC<{
     );
 };
 
-const AboutPage: React.FC = () => {
+const AboutPage: React.FC<{ socialLinks: SocialLinks }> = ({ socialLinks }) => {
     return (
         <main className="container page-content">
            <AnimatedSection className="about-page">
              <div className="about-content">
-                 <div className="about-img">
-                    <img src="https://raw.githubusercontent.com/sssssqew/product-design-portfolio/refs/heads/main/imgs/profile/profile-img.png" alt="John Doe" className="about-photo" />
+                 <div className="about-profile">
+                    <div className="about-photo-container">
+                        <img src="https://raw.githubusercontent.com/sssssqew/product-design-portfolio/refs/heads/main/imgs/profile/profile-img.png" alt="John Doe" className="about-photo" />
+                    </div>
+                    <div className="social-links">
+                        {socialLinks.youtube && <a href={socialLinks.youtube} target="_blank" rel="noopener noreferrer" title="YouTube"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M21.58 7.19c-.23-.86-.9-1.52-1.76-1.76C18.25 5 12 5 12 5s-6.25 0-7.82.43c-.86.24-1.53.9-1.76 1.76C2 8.76 2 12 2 12s0 3.24.43 4.81c.23.86.9 1.52 1.76 1.76C5.75 19 12 19 12 19s6.25 0 7.82-.43c.86-.24 1.53.9 1.76-1.76C22 15.24 22 12 22 12s0-3.24-.42-4.81zM10 15.46V8.54L15.2 12 10 15.46z"></path></svg></a>}
+                        {socialLinks.linkedin && <a href={socialLinks.linkedin} target="_blank" rel="noopener noreferrer" title="LinkedIn"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M21 3H3C1.9 3 1 3.9 1 5v14c0 1.1.9 2 2 2h18c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zM8 18H5V9h3v9zm-1.5-10.5c-.83 0-1.5-.67-1.5-1.5s.67-1.5 1.5-1.5 1.5.67 1.5 1.5-.67 1.5-1.5 1.5zM19 18h-3v-4.74c0-1.42-.6-2.08-1.56-2.08-1.21 0-1.44.88-1.44 2.08V18h-3V9h3v1.34h.04c.4-.71 1.39-1.34 2.96-1.34 3.22 0 3.5 2.11 3.5 4.89V18z"></path></svg></a>}
+                        {socialLinks.github && <a href={socialLinks.github} target="_blank" rel="noopener noreferrer" title="GitHub"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 1.27a11 11 0 00-3.48 21.46c.55.1.73-.24.73-.53v-1.84c-3.03.65-3.67-1.47-3.67-1.47a2.89 2.89 0 00-1.2-1.59c-1-.68.08-.67.08-.67a2.28 2.28 0 011.66 1.12 2.33 2.33 0 003.19.91 2.28 2.28 0 01.68-1.42c-2.43-.28-5-1.18-5-5.42a4.24 4.24 0 011.12-2.95 3.93 3.93 0 01.1-2.9s.92-.3 3 1.12a10.2 10.2 0 015.48 0c2.1-1.42 3-1.12 3-1.12a3.93 3.93 0 01.1 2.9 4.24 4.24 0 011.12 2.95c0 4.25-2.55 5.14-5 5.42a2.6 2.6 0 01.73 2.02v3c0 .29.18.63.73.53A11 11 0 0012 1.27z"></path></svg></a>}
+                        {socialLinks.blog && <a href={socialLinks.blog} target="_blank" rel="noopener noreferrer" title="Blog"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76 0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71 0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71 0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76 0 5-2.24 5-5s-2.24-5-5-5z"></path></svg></a>}
+                        {socialLinks.email && <a href={`mailto:${socialLinks.email}`} title="Email"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 4H4c-1.1 0-1.99.9-1.99 2L2 18c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 4l-8 5-8-5V6l8 5 8-5v2z"></path></svg></a>}
+                    </div>
                  </div>
                 <div className="about-text">
                     <h1>About Me</h1>
@@ -654,6 +698,7 @@ const ProjectForm: React.FC<{
         process: project?.process || [],
         challenges: project?.challenges || '',
         gallery: project?.gallery || [],
+        links: project?.links || { github: '', liveDemo: '', youtube: '' },
     });
     const [imagePreview, setImagePreview] = useState<string | null>(project?.imageUrl || null);
     const [stackInput, setStackInput] = useState(project?.stack?.join(', ') || '');
@@ -664,6 +709,17 @@ const ProjectForm: React.FC<{
     const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
         const { name, value } = e.target;
         setFormData(prev => ({ ...prev, [name]: value }));
+    };
+
+    const handleLinkChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        const { name, value } = e.target;
+        setFormData(prev => ({
+            ...prev,
+            links: {
+                ...prev.links,
+                [name]: value,
+            }
+        }));
     };
     
     const handleArrayInputChange = (value: string, field: keyof Omit<Project, 'id' | 'date'>, setInputState: React.Dispatch<React.SetStateAction<string>>) => {
@@ -751,6 +807,21 @@ const ProjectForm: React.FC<{
                 <label>Challenges</label>
                 <textarea name="challenges" value={formData.challenges} onChange={handleChange} rows={3}></textarea>
             </div>
+            <div className="project-links-form-section">
+                <h3>Project Links</h3>
+                <div className="form-group">
+                    <label>GitHub Repository URL</label>
+                    <input type="text" name="github" value={formData.links?.github || ''} onChange={handleLinkChange} placeholder="e.g., https://github.com/user/repo"/>
+                </div>
+                <div className="form-group">
+                    <label>Live Demo URL</label>
+                    <input type="text" name="liveDemo" value={formData.links?.liveDemo || ''} onChange={handleLinkChange} placeholder="e.g., https://example.com/demo"/>
+                </div>
+                <div className="form-group">
+                    <label>YouTube URL</label>
+                    <input type="text" name="youtube" value={formData.links?.youtube || ''} onChange={handleLinkChange} placeholder="e.g., https://youtube.com/watch?v=..."/>
+                </div>
+            </div>
             <div className="form-group">
                 <label>Gallery Image URLs (comma-separated)</label>
                 <input type="text" value={galleryInput} onChange={e => handleArrayInputChange(e.target.value, 'gallery', setGalleryInput)} />
@@ -778,7 +849,9 @@ const AdminDashboard: React.FC<{
     setLoggedIn: (loggedIn: boolean) => void;
     projectTypes: string[];
     setProjectTypes: (types: string[] | ((t: string[]) => string[])) => void;
-}> = ({ projects, setProjects, setAdminPassword, setLoggedIn, projectTypes, setProjectTypes }) => {
+    socialLinks: SocialLinks;
+    setSocialLinks: (links: SocialLinks) => void;
+}> = ({ projects, setProjects, setAdminPassword, setLoggedIn, projectTypes, setProjectTypes, socialLinks, setSocialLinks }) => {
     const [editingProject, setEditingProject] = useState<Project | null | 'new'>(null);
     const [projectToDelete, setProjectToDelete] = useState<Project | null>(null);
     const [categoryToDelete, setCategoryToDelete] = useState<string | null>(null);
@@ -786,6 +859,8 @@ const AdminDashboard: React.FC<{
     const [confirmPassword, setConfirmPassword] = useState('');
     const [passwordMessage, setPasswordMessage] = useState('');
     const [newCategory, setNewCategory] = useState('');
+    const [localSocialLinks, setLocalSocialLinks] = useState<SocialLinks>(socialLinks);
+    const [socialsMessage, setSocialsMessage] = useState('');
     const dragItem = useRef<number | null>(null);
     const dragOverItem = useRef<number | null>(null);
 
@@ -890,6 +965,18 @@ const AdminDashboard: React.FC<{
 
         setProjectTypes(prev => prev.filter(pt => pt !== categoryToDelete)); // 상태 업데이트
         setCategoryToDelete(null);
+    };
+
+    const handleSocialsSave = (e: React.FormEvent) => {
+        e.preventDefault();
+        setSocialLinks(localSocialLinks);
+        setSocialsMessage('Social links updated successfully!');
+        setTimeout(() => setSocialsMessage(''), 3000);
+    };
+
+    const handleSocialsChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        const { name, value } = e.target;
+        setLocalSocialLinks(prev => ({...prev, [name]: value}));
     };
 
 
@@ -997,6 +1084,34 @@ const AdminDashboard: React.FC<{
                     </div>
                 </div>
 
+                <div className="admin-section">
+                    <h3>Manage Social Links</h3>
+                    <form onSubmit={handleSocialsSave}>
+                        <div className="form-group">
+                            <label>YouTube</label>
+                            <input type="text" name="youtube" value={localSocialLinks.youtube} onChange={handleSocialsChange} placeholder="Full YouTube URL" />
+                        </div>
+                        <div className="form-group">
+                            <label>LinkedIn</label>
+                            <input type="text" name="linkedin" value={localSocialLinks.linkedin} onChange={handleSocialsChange} placeholder="Full LinkedIn URL" />
+                        </div>
+                        <div className="form-group">
+                            <label>GitHub</label>
+                            <input type="text" name="github" value={localSocialLinks.github} onChange={handleSocialsChange} placeholder="Full GitHub URL" />
+                        </div>
+                        <div className="form-group">
+                            <label>Blog</label>
+                            <input type="text" name="blog" value={localSocialLinks.blog} onChange={handleSocialsChange} placeholder="Full Blog URL" />
+                        </div>
+                        <div className="form-group">
+                            <label>Email</label>
+                            <input type="email" name="email" value={localSocialLinks.email} onChange={handleSocialsChange} placeholder="your.email@example.com" />
+                        </div>
+                        <button type="submit">Save Social Links</button>
+                    </form>
+                    {socialsMessage && <p className="password-message">{socialsMessage}</p>}
+                </div>
+
                 <div className="admin-password-change">
                     <h3>Change Password</h3>
                     <form onSubmit={handleChangePassword}>
@@ -1036,6 +1151,13 @@ const App: React.FC = () => {
     const [isLoading, setIsLoading] = useState(true);
     const [adminPassword, setAdminPassword] = useLocalStorage<string>('admin-password', '0000');
     const [projectTypes, setProjectTypes] = useLocalStorage<string[]>('project-types', ['Frontend', 'UX Design', 'AI Creations']);
+    const [socialLinks, setSocialLinks] = useLocalStorage<SocialLinks>('social-links', {
+        youtube: 'https://www.youtube.com',
+        linkedin: 'https://www.linkedin.com/in/johndoe',
+        github: 'https://github.com/johndoe',
+        blog: 'https://medium.com/@johndoe',
+        email: 'john.doe@example.com',
+    });
     const [loggedIn, setLoggedIn] = useState(() => !!sessionStorage.getItem('admin-logged-in'));
     const [activePage, setActivePage] = useState(projectTypes[0] || 'About');
     const [selectedProjectId, setSelectedProjectId] = useState<string | null>(null);
@@ -1114,12 +1236,14 @@ const App: React.FC = () => {
                         setLoggedIn={setLoggedIn}
                         projectTypes={projectTypes}
                         setProjectTypes={setProjectTypes}
+                        socialLinks={socialLinks}
+                        setSocialLinks={setSocialLinks}
                     />;
         }
 
         switch (activePage) {
             case 'About':
-                return <AboutPage />;
+                return <AboutPage socialLinks={socialLinks}/>;
             case 'AdminLogin':
                 return <AdminLogin setLoggedIn={setLoggedIn} adminPassword={adminPassword} />;
             default:
