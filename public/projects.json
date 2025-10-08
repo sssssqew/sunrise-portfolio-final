@@ -26,7 +26,15 @@
       "Platform Deployment & Promotion (YouTube)"
     ],
     "challenges": "Content Redundancy & Feature Inaccuracy in AI-Generated Scripts:\nThe initial scripts from ChatGPT often presented repetitive content and failed to accurately capture specific product features from detailed e-commerce listings. This necessitated extensive human revision and strategic rephrasing, significantly prolonging the script development phase.\n\nComplex Script-to-Visual Synchronization:\nA considerable challenge lay in effectively synchronizing the thoroughly revised narrative script with fitting product images. This required meticulous manual selection and careful alignment to ensure visual relevance and a seamless content flow throughout the video.\n",
-    "gallery": [],
+    "gallery": [
+      "https://raw.githubusercontent.com/sssssqew/product-design-portfolio/refs/heads/main/imgs/ecommerce/1.PNG",
+      "https://raw.githubusercontent.com/sssssqew/product-design-portfolio/refs/heads/main/imgs/ecommerce/2.PNG",
+      "https://raw.githubusercontent.com/sssssqew/product-design-portfolio/refs/heads/main/imgs/ecommerce/3.PNG",
+      "https://raw.githubusercontent.com/sssssqew/product-design-portfolio/refs/heads/main/imgs/ecommerce/4.PNG",
+      "https://raw.githubusercontent.com/sssssqew/product-design-portfolio/refs/heads/main/imgs/ecommerce/5.PNG",
+      "https://raw.githubusercontent.com/sssssqew/product-design-portfolio/refs/heads/main/imgs/ecommerce/6.PNG",
+      "https://raw.githubusercontent.com/sssssqew/product-design-portfolio/refs/heads/main/imgs/ecommerce/7.PNG"
+    ],
     "id": "1759905735905",
     "date": "2025-10-08"
   },
