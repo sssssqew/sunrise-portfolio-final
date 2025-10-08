@@ -43,29 +43,13 @@ interface SocialLinks {
     email: string;
 }
 
+interface PortfolioData {
+    projects: Project[];
+    projectTypes: string[];
+    socialLinks: SocialLinks;
+}
+
 // --- UTILITY HOOKS & FUNCTIONS --- //
-
-const useLocalStorage = <T,>(key: string, initialValue: T): [T, React.Dispatch<React.SetStateAction<T>>] => {
-  const [value, setValue] = useState<T>(() => {
-    try {
-      const item = window.localStorage.getItem(key);
-      return item ? JSON.parse(item) : initialValue;
-    } catch (error) {
-      console.error(`Error reading localStorage key “${key}”:`, error);
-      return initialValue;
-    }
-  });
-
-  useEffect(() => {
-    try {
-      window.localStorage.setItem(key, JSON.stringify(value));
-    } catch (error) {
-      console.error(`Error setting localStorage key “${key}”:`, error);
-    }
-  }, [key, value]);
-
-  return [value, setValue];
-};
 
 const useAnimatedVisibility = <T extends HTMLElement>(options = { threshold: 0.1, triggerOnce: true }) => {
     const ref = useRef<T>(null);
@@ -646,14 +630,14 @@ const AboutPage: React.FC<{ socialLinks: SocialLinks }> = ({ socialLinks }) => {
 
 const AdminLogin: React.FC<{
     setLoggedIn: (loggedIn: boolean) => void;
-    adminPassword: string
-}> = ({ setLoggedIn, adminPassword }) => {
+}> = ({ setLoggedIn }) => {
     const [password, setPassword] = useState('');
     const [error, setError] = useState('');
+    const [localAdminPassword] = useState(() => localStorage.getItem('admin-password') || '0000');
 
     const handleSubmit = (e: React.FormEvent) => {
         e.preventDefault();
-        if (password === adminPassword) {
+        if (password === localAdminPassword) {
             sessionStorage.setItem('admin-logged-in', 'true');
             setLoggedIn(true);
         } else {
@@ -845,13 +829,12 @@ const ProjectForm: React.FC<{
 const AdminDashboard: React.FC<{
     projects: Project[];
     setProjects: (projects: Project[] | ((p: Project[]) => Project[])) => void;
-    setAdminPassword: (password: string) => void;
     setLoggedIn: (loggedIn: boolean) => void;
     projectTypes: string[];
     setProjectTypes: (types: string[] | ((t: string[]) => string[])) => void;
     socialLinks: SocialLinks;
     setSocialLinks: (links: SocialLinks) => void;
-}> = ({ projects, setProjects, setAdminPassword, setLoggedIn, projectTypes, setProjectTypes, socialLinks, setSocialLinks }) => {
+}> = ({ projects, setProjects, setLoggedIn, projectTypes, setProjectTypes, socialLinks, setSocialLinks }) => {
     const [editingProject, setEditingProject] = useState<Project | null | 'new'>(null);
     const [projectToDelete, setProjectToDelete] = useState<Project | null>(null);
     const [categoryToDelete, setCategoryToDelete] = useState<string | null>(null);
@@ -893,7 +876,7 @@ const AdminDashboard: React.FC<{
             setPasswordMessage('Password must be at least 4 characters long.');
             return;
         }
-        setAdminPassword(newPassword);
+        localStorage.setItem('admin-password', newPassword);
         setPasswordMessage('Password changed successfully!');
         setNewPassword('');
         setConfirmPassword('');
@@ -927,15 +910,15 @@ const AdminDashboard: React.FC<{
     };
     
     const handleExport = () => {
-        const dataStr = JSON.stringify(projects, null, 2);
+        const dataToSave: PortfolioData = { projects, projectTypes, socialLinks };
+        const dataStr = JSON.stringify(dataToSave, null, 2);
         const dataUri = 'data:application/json;charset=utf-8,'+ encodeURIComponent(dataStr);
-
-        const exportFileDefaultName = 'projects.json';
-
+        const exportFileDefaultName = 'portfolio-data.json';
         const linkElement = document.createElement('a');
         linkElement.setAttribute('href', dataUri);
         linkElement.setAttribute('download', exportFileDefaultName);
         linkElement.click();
+        alert('portfolio-data.json 파일이 다운로드되었습니다. public 폴더에 덮어쓴 후 GitHub에 Push하세요.');
     };
 
     const handleAddCategory = () => {
@@ -1002,14 +985,33 @@ const AdminDashboard: React.FC<{
                       <button onClick={() => setEditingProject('new')} className="add-project-button" title="Add New Project" aria-label="Add new project">
                         <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><path d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z"></path></svg>
                       </button>
-                      <button onClick={handleExport} className="export-button" title="Export projects.json" aria-label="Export projects.json">
+                      {/* <button onClick={handleExport} className="export-button" title="Export projects.json" aria-label="Export projects.json">
                         <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><path d="M5 20h14v-2H5v2zM19 9h-4V3H9v6H5l7 7 7-7z"></path></svg>
-                      </button>
+                      </button> */}
                       <button onClick={handleLogout} className="logout-button" title="Logout" aria-label="Logout">
                         <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><path d="M17 7l-1.41 1.41L18.17 11H8v2h10.17l-2.58 2.58L17 17l5-5zM4 5h8V3H4c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h8v-2H4V5z"></path></svg>
                       </button>
                     </div>
                 </div>
+
+                <div className="admin-section important-notice">
+                    <h3>중요: 데이터 저장 및 적용 방법</h3>
+                    <p>
+                        이 페이지에서 프로젝트, 카테고리, 소셜 링크를 수정한 내용은 자동으로 사이트에 반영되지 않습니다.
+                        모든 수정을 마친 후, 아래 절차를 따라야 모든 방문자에게 변경 사항이 보이게 됩니다.
+                    </p>
+                    <ol>
+                        <li>모든 수정(프로젝트 추가/삭제, 순서 변경, 카테고리 관리 등)을 완료합니다.</li>
+                        <li>아래의 <strong>'데이터 파일 저장 및 다운로드'</strong> 버튼을 클릭하여 `portfolio-data.json` 파일을 다운로드합니다.</li>
+                        <li>다운로드한 파일을 내 컴퓨터의 프로젝트 폴더 안에 있는 <strong>`public` 폴더로 이동시켜 기존 파일을 덮어씁니다.</strong></li>
+                        <li>VS Code 또는 Git 도구를 사용하여 변경된 `portfolio-data.json` 파일을 <strong>GitHub에 Commit & Push</strong> 합니다.</li>
+                    </ol>
+                     <button onClick={handleExport} className="export-button">
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><path d="M5 20h14v-2H5v2zM19 9h-4V3H9v6H5l7 7 7-7z"></path></svg>
+                        데이터 파일 저장 및 다운로드
+                    </button>
+                </div>
+
                 
                 <div className="admin-section">
                     <h3>Manage Projects</h3>
@@ -1112,8 +1114,12 @@ const AdminDashboard: React.FC<{
                     {socialsMessage && <p className="password-message">{socialsMessage}</p>}
                 </div>
 
-                <div className="admin-password-change">
+                <div className="admin-section">
                     <h3>Change Password</h3>
+                    <p className="notice-text">
+                        <strong>참고:</strong> 관리자 비밀번호는 보안을 위해 `portfolio-data.json` 파일에 포함되지 않습니다.
+                        비밀번호는 현재 사용 중인 <strong>이 웹 브라우저에만 저장됩니다.</strong> 다른 컴퓨터나 브라우저에서 관리자 페이지에 접속하려면, 해당 기기에서 다시 비밀번호를 설정해야 할 수 있습니다.
+                    </p>
                     <form onSubmit={handleChangePassword}>
                         <input type="password" value={newPassword} onChange={e => setNewPassword(e.target.value)} placeholder="New Password" required />
                         <input type="password" value={confirmPassword} onChange={e => setConfirmPassword(e.target.value)} placeholder="Confirm New Password" required />
@@ -1148,33 +1154,37 @@ const AdminDashboard: React.FC<{
 
 const App: React.FC = () => {
     const [projects, setProjects] = useState<Project[]>([]);
-    const [isLoading, setIsLoading] = useState(true);
-    const [adminPassword, setAdminPassword] = useLocalStorage<string>('admin-password', '0000');
-    const [projectTypes, setProjectTypes] = useLocalStorage<string[]>('project-types', ['Frontend', 'UX Design', 'AI Creations']);
-    const [socialLinks, setSocialLinks] = useLocalStorage<SocialLinks>('social-links', {
-        youtube: 'https://www.youtube.com',
-        linkedin: 'https://www.linkedin.com/in/johndoe',
-        github: 'https://github.com/johndoe',
-        blog: 'https://medium.com/@johndoe',
-        email: 'john.doe@example.com',
+    const [projectTypes, setProjectTypes] = useState<string[]>([]);
+    const [socialLinks, setSocialLinks] = useState<SocialLinks>({
+        youtube: '', linkedin: '', github: '', blog: '', email: ''
     });
-    const [loggedIn, setLoggedIn] = useState(() => !!sessionStorage.getItem('admin-logged-in'));
-    const [activePage, setActivePage] = useState(projectTypes[0] || 'About');
-    const [selectedProjectId, setSelectedProjectId] = useState<string | null>(null);
 
+    const [isLoading, setIsLoading] = useState(true);
+    const [loggedIn, setLoggedIn] = useState(() => !!sessionStorage.getItem('admin-logged-in'));
+    const [activePage, setActivePage] = useState('About');
+    const [selectedProjectId, setSelectedProjectId] = useState<string | null>(null);
+    // const [isLogOpen, setIsLogOpen] = useState(false);
+    
     useEffect(() => {
         setIsLoading(true);
-        fetch(`${import.meta.env.BASE_URL}projects.json?t=${new Date().getTime()}`)
+        fetch(`${import.meta.env.BASE_URL}portfolio-data.json?t=${new Date().getTime()}`)
             .then(response => {
                 if (!response.ok) {
                     throw new Error('Network response was not ok');
                 }
                 return response.json();
             })
-            .then(data => setProjects(data))
+            .then((data: PortfolioData) => {
+                setProjects(data.projects);
+                setProjectTypes(data.projectTypes);
+                setSocialLinks(data.socialLinks);
+                setActivePage(data.projectTypes[0] || 'About'); // Set initial page after data load
+            })
             .catch(error => {
-                console.error("Error fetching projects:", error);
-                setProjects([]); // Set to empty array on error
+                console.error("Error fetching portfolio data:", error);
+                setProjects([]); 
+                setProjectTypes(['Error']);
+                setActivePage('About');
             })
             .finally(() => {
                 setIsLoading(false);
@@ -1232,7 +1242,6 @@ const App: React.FC = () => {
              return <AdminDashboard 
                         projects={projects}
                         setProjects={setProjects}
-                        setAdminPassword={setAdminPassword}
                         setLoggedIn={setLoggedIn}
                         projectTypes={projectTypes}
                         setProjectTypes={setProjectTypes}
@@ -1245,7 +1254,7 @@ const App: React.FC = () => {
             case 'About':
                 return <AboutPage socialLinks={socialLinks}/>;
             case 'AdminLogin':
-                return <AdminLogin setLoggedIn={setLoggedIn} adminPassword={adminPassword} />;
+                return <AdminLogin setLoggedIn={setLoggedIn} />;
             default:
                 if (projectTypes.includes(activePage)) {
                     return <PortfolioPage projects={projects} type={activePage} onProjectSelect={setSelectedProjectId} />;
