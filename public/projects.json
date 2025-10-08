@@ -412,7 +412,17 @@
       "Human-Led Post-Production & Multimedia Integration (Vrew)"
     ],
     "challenges": "Prolonged Iterative Generation & Refinement:\nAchieving precise visual and thematic alignment with AI-generated outputs often necessitated extensive iterative generation, significantly extending the asset creation and refinement phase.\n\nResource Constraints & Workflow Overhead:\nNavigating restrictive free-tier credit limitations for AI generation tools demanded managing multiple user accounts, introducing notable workflow inefficiencies and operational overhead.\n\nVisual Cohesion & Manual Curation Burden:\nEnsuring consistent visual and stylistic cohesion across numerous AI-generated images and video segments proved challenging, requiring intensive manual review and strategic adjustments.\n\nComplex Audio-Visual Synchronization:\nPost-production involved intricate challenges in curating appropriate background music and sound effects, alongside meticulous audio-visual synchronization to seamlessly integrate sound into the animated narrative.",
-    "gallery": [],
+    "gallery": [
+      "https://raw.githubusercontent.com/sssssqew/product-design-portfolio/refs/heads/main/imgs/ai-animation/1.PNG",
+      "https://raw.githubusercontent.com/sssssqew/product-design-portfolio/refs/heads/main/imgs/ai-animation/2.PNG",
+      "https://raw.githubusercontent.com/sssssqew/product-design-portfolio/refs/heads/main/imgs/ai-animation/3.PNG",
+      "https://raw.githubusercontent.com/sssssqew/product-design-portfolio/refs/heads/main/imgs/ai-animation/4.PNG",
+      "https://raw.githubusercontent.com/sssssqew/product-design-portfolio/refs/heads/main/imgs/ai-animation/5.PNG",
+      "https://raw.githubusercontent.com/sssssqew/product-design-portfolio/refs/heads/main/imgs/ai-animation/6.PNG",
+      "https://raw.githubusercontent.com/sssssqew/product-design-portfolio/refs/heads/main/imgs/ai-animation/7.PNG",
+      "https://raw.githubusercontent.com/sssssqew/product-design-portfolio/refs/heads/main/imgs/ai-animation/8.PNG",
+      "https://raw.githubusercontent.com/sssssqew/product-design-portfolio/refs/heads/main/imgs/ai-animation/9.PNG"
+    ],
     "id": "1759884020007",
     "date": "2024-05-20"
   }
