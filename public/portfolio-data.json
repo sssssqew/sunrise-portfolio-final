@@ -111,6 +111,11 @@
         "https://raw.githubusercontent.com/sssssqew/product-design-portfolio/refs/heads/main/imgs/web-animation/4.jpg",
         "https://raw.githubusercontent.com/sssssqew/product-design-portfolio/refs/heads/main/imgs/web-animation/5.jpg"
       ],
+      "links": {
+        "github": "https://github.com/sssssqew/simple-scroll-animation-4",
+        "liveDemo": "https://sssssqew.github.io/simple-scroll-animation-4/",
+        "youtube": ""
+      },
       "id": "1759219635336",
       "date": "2025-09-30"
     },
