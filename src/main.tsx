@@ -508,7 +508,7 @@ const ProjectDetailPage: React.FC<{
                                 )}
                                 {project.links.youtube && (
                                     <a href={project.links.youtube} target="_blank" rel="noopener noreferrer">
-                                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><path d="M21.58 7.19c-.23-.86-.9-1.52-1.76-1.76C18.25 5 12 5 12 5s-6.25 0-7.82.43c-.86.24-1.53.9-1.76 1.76C2 8.76 2 12 2 12s0 3.24.43 4.81c.23.86.9 1.52 1.76 1.76C5.75 19 12 19 12 19s6.25 0 7.82-.43c.86-.24 1.53.9 1.76-1.76C22 15.24 22 12 22 12s0-3.24-.42-4.81zM10 15.46V8.54L15.2 12 10 15.46z"></path></svg>
+                                         <svg width="20" height="20" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><path d="M21.58 7.19c-.23-.86-.9-1.52-1.76-1.76C18.25 5 12 5 12 5s-6.25 0-7.82.43c-.86.24-1.53.9-1.76 1.76C2 8.76 2 12 2 12s0 3.24.43 4.81c.23.86.9 1.52 1.76 1.76C5.75 19 12 19 12 19s6.25 0 7.82-.43c.86-.24 1.53.9 1.76-1.76C22 15.24 22 12 22 12s0-3.24-.42-4.81zM10 15.46V8.54L15.2 12 10 15.46z"></path></svg>
                                         YouTube
                                     </a>
                                 )}

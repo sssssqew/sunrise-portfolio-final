@@ -543,6 +543,12 @@ html, body {
     transform: translateY(-2px);
 }
 
+.project-links svg {
+    width: 20px;
+    height: 20px;
+    fill: currentColor;
+}
+
 .detail-body-container {
     max-width: 800px;
     margin: 0 auto;
