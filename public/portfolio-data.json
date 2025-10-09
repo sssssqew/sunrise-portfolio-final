@@ -35,6 +35,11 @@
         "https://raw.githubusercontent.com/sssssqew/product-design-portfolio/refs/heads/main/imgs/scientific-video/4.PNG",
         "https://raw.githubusercontent.com/sssssqew/product-design-portfolio/refs/heads/main/imgs/scientific-video/5.PNG"
       ],
+      "links": {
+        "github": "",
+        "liveDemo": "",
+        "youtube": "https://www.youtube.com/watch?v=1IKmm0JrCZw"
+      },
       "id": "1759911374500",
       "date": "2025-10-08"
     },
@@ -74,6 +79,11 @@
         "https://raw.githubusercontent.com/sssssqew/product-design-portfolio/refs/heads/main/imgs/ecommerce/6.PNG",
         "https://raw.githubusercontent.com/sssssqew/product-design-portfolio/refs/heads/main/imgs/ecommerce/7.PNG"
       ],
+      "links": {
+        "github": "",
+        "liveDemo": "",
+        "youtube": "https://www.youtube.com/shorts/HuodD4HguTo"
+      },
       "id": "1759905735905",
       "date": "2025-10-08"
     },
@@ -159,6 +169,11 @@
       ],
       "challenges": "Initially, comprehending the mechanism for publishing an npm library to be globally downloadable by users was challenging due to a lack of prior experience. Designing intuitive CLI command names and a step-by-step UI was also demanding. Integrating unfamiliar tools like esbuild, SWC, and Bun cohesively posed another significant hurdle. These issues were systematically addressed through thorough documentation review, incremental feature implementation, and extensive experimentation. \n\nThe most formidable challenge involved relaying esbuild's CLI-only error messages to the browser, which necessitated developing a WebSocket server for development and arduously integrating it with esbuild through persistent trial and error, even with AI assistance.",
       "gallery": [],
+      "links": {
+        "github": "https://github.com/sssssqew/react-esbuild/tree/main",
+        "liveDemo": "",
+        "youtube": ""
+      },
       "id": "1759216325615",
       "date": "2025-09-30"
     },
@@ -195,6 +210,11 @@
       ],
       "challenges": "During the project, a major challenge was implementing extensibility by recursively generating DOM elements using the same function. This was resolved by applying a recursive approach. Simplifying the complex Jest-like testing utility involved distilling core functionalities into concise functions to improve efficiency. \n\nFor client-side routing, detecting whether the user navigated forward or backward in the browser history was difficult. To address this, a state property was added to the window object to track navigation, and for cases where the user did not navigate backward or forward, window.history.pushState was used to record the visited URLs.",
       "gallery": [],
+      "links": {
+        "github": "https://github.com/sssssqew/profile-obj",
+        "liveDemo": "",
+        "youtube": ""
+      },
       "id": "1759046922695",
       "date": "2025-09-28"
     },
@@ -235,6 +255,11 @@
       ],
       "challenges": "Major challenges included unclear integration of the entire technology stack, designing an efficient project folder structure, and correctly configuring paths within Docker files. To address these issues, extensive research was conducted using online resources, followed by incremental implementation and iterative troubleshooting through trial and error. This methodical approach enabled steady progress and successful resolution of technical obstacles.",
       "gallery": [],
+      "links": {
+        "github": "https://github.com/sssssqew/MERN-Project",
+        "liveDemo": "",
+        "youtube": ""
+      },
       "id": "1759884020001",
       "date": "2024-01-20"
     },
@@ -318,6 +343,11 @@
         "https://raw.githubusercontent.com/sssssqew/product-design-portfolio/refs/heads/main/imgs/lightstand/17.PNG",
         "https://raw.githubusercontent.com/sssssqew/product-design-portfolio/refs/heads/main/imgs/lightstand/18.PNG"
       ],
+      "links": {
+        "github": "https://sssssqew.github.io/product-design-portfolio/docs/Sustainable%20Design%20-%20LED%20Light%20Stand%20(Project%202)%20Sungyong%20Lee.pdf",
+        "liveDemo": "",
+        "youtube": ""
+      },
       "id": "1759884020003",
       "date": "2023-09-05"
     },
@@ -383,6 +413,11 @@
         "https://raw.githubusercontent.com/sssssqew/product-design-portfolio/refs/heads/main/imgs/Hand-crank-generator/28.PNG",
         "https://raw.githubusercontent.com/sssssqew/product-design-portfolio/refs/heads/main/imgs/Hand-crank-generator/29.PNG"
       ],
+      "links": {
+        "github": "https://sssssqew.github.io/product-design-portfolio/docs/Design%20theory%20and%203D%20Conceptualization%20-%20Final%20project%20-%20Solar%20+%20Hand%20crank%20powered%20cooking%20station%20(SUNGYONG%20LEE).pdf",
+        "liveDemo": "",
+        "youtube": ""
+      },
       "id": "1759884020004",
       "date": "2023-11-15"
     },
@@ -427,6 +462,11 @@
         "https://raw.githubusercontent.com/sssssqew/product-design-portfolio/refs/heads/main/imgs/portfolio-site/9.PNG",
         "https://raw.githubusercontent.com/sssssqew/product-design-portfolio/refs/heads/main/imgs/portfolio-site/10.PNG"
       ],
+      "links": {
+        "github": "https://github.com/sssssqew/sunrise-portfolio-final",
+        "liveDemo": "",
+        "youtube": ""
+      },
       "id": "1759884020005",
       "date": "2024-05-20"
     },
@@ -506,6 +546,11 @@
         "https://raw.githubusercontent.com/sssssqew/product-design-portfolio/refs/heads/main/imgs/ai-animation/8.PNG",
         "https://raw.githubusercontent.com/sssssqew/product-design-portfolio/refs/heads/main/imgs/ai-animation/9.PNG"
       ],
+      "links": {
+        "github": "",
+        "liveDemo": "",
+        "youtube": "https://www.youtube.com/watch?v=8GQgrSwafFU"
+      },
       "id": "1759884020007",
       "date": "2024-05-20"
     }
