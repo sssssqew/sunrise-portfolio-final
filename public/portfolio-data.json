@@ -368,6 +368,7 @@
       ],
       "challenges": "1. Fabrication & Prototyping Limitations:\n\nChallenge: Fabricating the transparent acrylic enclosure, particularly cutting its thick material and creating precise square apertures, was challenging due to limited and conventional tooling available in the school workshop. \n\nSolution: Overcame tooling constraints by meticulously drilling initial circular openings and then manually shaping them into the desired square forms.\n\n2. Aesthetic & Educational Integration of Electronics:\n\nChallenge: Integrating Arduino circuitry and wiring aesthetically within a transparent enclosure was a significant hurdle. The design intended to visually expose the circuit for educational and curiosity purposes for children, necessitating an exceptionally clean and visually appealing wiring layout that initially seemed difficult to achieve. \n\nSolution: Leveraged prior experience in desktop PC assembly to meticulously organize and route the internal wiring, ensuring both functionality and a clean, appealing visual presentation through the transparent frame.\n\n3. Optimizing LED Placement for Distinct Projection:\n\nChallenge: Achieving the key feature of projecting clear Korean characters onto a surface in low-light conditions required precise LED height and position calibration. Determining the optimal arrangement for sharp, legible projection proved complex. \n\nSolution: Through an iterative process of experimentation and multiple adjustments to LED placement and height, the ideal configuration was identified to successfully project distinct Korean characters.",
       "gallery": [
+        "https://github.com/sssssqew/product-design-portfolio/blob/e1390409622df5daab9e7758c665b8f3a734334b/imgs/lightstand/demo.gif?raw=true",
         "https://raw.githubusercontent.com/sssssqew/product-design-portfolio/b4d8a31031a2f5aa558ab6075322db8cced1cd42/imgs/lightstand/1.PNG",
         "https://raw.githubusercontent.com/sssssqew/product-design-portfolio/refs/heads/main/imgs/lightstand/2.PNG",
         "https://raw.githubusercontent.com/sssssqew/product-design-portfolio/refs/heads/main/imgs/lightstand/3.PNG",
@@ -390,7 +391,7 @@
       "links": {
         "github": "https://sssssqew.github.io/product-design-portfolio/docs/Sustainable%20Design%20-%20LED%20Light%20Stand%20(Project%202)%20Sungyong%20Lee.pdf",
         "liveDemo": "",
-        "youtube": ""
+        "youtube": "https://youtube.com/shorts/UgkpGq0yKOo?feature=share"
       },
       "id": "1759884020003",
       "date": "2023-09-05"
