@@ -10,6 +10,10 @@ import { createRoot } from 'react-dom/client';
 import './index.css';
 
 // --- DATA & TYPES --- //
+interface ExpandableContent {
+  summary: string;
+  details: string;
+}   
 
 
 interface Project {
@@ -19,14 +23,14 @@ interface Project {
   imageUrl: string;
   duration: string; // e.g., "3 Weeks"
   difficulty: 'Easy' | 'Medium' | 'Hard' | 'Expert';
-  outcome: string;
+  outcome: string | ExpandableContent[];
   stack: string[];
   tags: string[];
   date: string; // YYYY-MM-DD for sorting
-  description: string;
+  description: string | ExpandableContent[];
   role: string;
   process: string[];
-  challenges: string;
+  challenges: string | ExpandableContent[];
   gallery: string[];
   links?: {
     github?: string;
@@ -79,8 +83,34 @@ const useAnimatedVisibility = <T extends HTMLElement>(options = { threshold: 0.1
     return [ref, isVisible] as const;
 };
 
+const expandableContentToString = (content: string | ExpandableContent[]): string => {
+    if (typeof content === 'string') return content;
+    if (!Array.isArray(content) || content.length === 0) return '';
+    return content.map(item => `[Summary]\n${item.summary}\n[Details]\n${item.details}`).join('\n---\n');
+};
 
-// --- UI COMPONENTS --- //
+const stringToExpandableContent = (str: string): string | ExpandableContent[] => {
+    if (!str.includes('[Summary]') || !str.includes('[Details]')) return str.trim();
+    
+    const items = str.split('\n---\n');
+    const content: ExpandableContent[] = items.map(itemStr => {
+        const summaryMatch = itemStr.match(/\[Summary\]\s*([\s\S]*?)\s*\[Details\]/);
+        const detailsMatch = itemStr.match(/\[Details\]\s*([\s\S]*)/);
+        
+        const summary = summaryMatch ? summaryMatch[1].trim() : '';
+        const details = detailsMatch ? detailsMatch[1].trim() : '';
+        
+        if (summary) {
+            return { summary, details };
+        }
+        return null;
+    }).filter((item): item is ExpandableContent => item !== null);
+
+    return content.length > 0 ? content : str.trim();
+};
+
+
+// --- UI COMPONENTS --- // 
 
 const Header: React.FC<{
     activePage: string;
@@ -110,13 +140,21 @@ const Header: React.FC<{
 
 const ProjectCard: React.FC<{ project: Project; onClick: () => void }> = ({ project, onClick }) => {
     const [ref, isVisible] = useAnimatedVisibility<HTMLDivElement>();
+    const outcomeText = useMemo(() => {
+        if (Array.isArray(project.outcome)) {
+            return project.outcome.map(o => o.summary).join(' ');
+        }
+        return project.outcome;
+    }, [project.outcome]);
+
     return (
         <div ref={ref} className={`project-card ${isVisible ? 'visible' : ''}`} onClick={onClick}>
             <div className="card-image" style={{ backgroundImage: `url(${project.imageUrl})` }}></div>
             <div className="card-content">
                 <span className="card-type">{project.type}</span>
                 <h3>{project.title}</h3>
-                <p className="card-outcome">{project.outcome}</p>
+                {/* TODO: 추후 간단한 요약 문장으로 수정 */}
+                <p className="card-outcome">{outcomeText}</p>
                 <div className="card-details">
                     <span><strong>Duration:</strong> {project.duration}</span>
                     <span><strong>Difficulty:</strong> {project.difficulty}</span>
@@ -349,6 +387,49 @@ const AnimatedSection: React.FC<{children: React.ReactNode, className?: string}>
     return <div ref={ref} className={`${className || ''} animated-section ${isVisible ? 'visible' : ''}`}>{children}</div>;
 };
 
+const ExpandableSection: React.FC<{ summary: string; details: string }> = ({ summary, details }) => {
+    const [isExpanded, setIsExpanded] = useState(false);
+    const detailsRef = useRef<HTMLDivElement>(null);
+
+    return (
+        <div className={`expandable-section ${isExpanded ? 'expanded' : ''}`}>
+            <div className="expandable-header" onClick={() => setIsExpanded(!isExpanded)} role="button" tabIndex={0} onKeyDown={(e) => (e.key === 'Enter' || e.key === ' ') && setIsExpanded(!isExpanded)} aria-expanded={isExpanded}>
+                <p className="summary">{summary}</p>
+                <div className="expand-button">
+                    <span>{isExpanded ? 'Collapse' : 'Read More'}</span>
+                    <svg viewBox="0 0 24 24"><path d="M7.41 8.59L12 13.17l4.59-4.58L18 10l-6 6-6-6 1.41-1.41z"/></svg>
+                </div>
+            </div>
+            <div 
+                ref={detailsRef}
+                className="expandable-details-wrapper"
+                style={{ maxHeight: isExpanded ? `${detailsRef.current?.scrollHeight}px` : '0px' }}
+                aria-hidden={!isExpanded}
+            >
+                <div className="details">
+                    <p className="multi-line-text">{details}</p>
+                </div>
+            </div>
+        </div>
+    );
+};
+
+const ContentRenderer: React.FC<{ content: string | ExpandableContent[] }> = ({ content }) => {
+    if (typeof content === 'string') {
+        return <p className="multi-line-text">{content}</p>;
+    }
+    if (Array.isArray(content) && content.length > 0) {
+        return (
+            <div className="expandable-content-container">
+                {content.map((item, index) => (
+                    <ExpandableSection key={index} summary={item.summary} details={item.details} />
+                ))}
+            </div>
+        );
+    }
+    return <p>No details provided.</p>;
+};
+
 // 파일: index.tsx
 
 // [핵심 변경] 스크롤에 따라 개별 이미지를 애니메이션하기 위해 새로 추가된 컴포넌트입니다.
@@ -381,6 +462,14 @@ const ProjectDetailPage: React.FC<{
      useEffect(() => {
         window.scrollTo(0, 0);
     }, [project]);
+
+    // const outcomeText = useMemo(() => {
+    //     if (Array.isArray(project.outcome)) {
+    //         return project.outcome.map(o => o.summary).join(' ');
+    //     }
+    //     return project.outcome;
+    // }, [project.outcome]);
+
 
     // 라이트박스의 상태에 따라 body의 스크롤을 제어하는 useEffect 훅입니다.
     useEffect(() => {
@@ -491,7 +580,7 @@ const ProjectDetailPage: React.FC<{
                     <div className="hero-overlay"></div>
                     <div className="hero-content">
                         <h1>{project.title}</h1>
-                        {/* <p>{project.outcome}</p> */}
+                        {/* <p>{outcomeText}</p> */}
                         {project.links && (project.links.github || project.links.liveDemo || project.links.youtube) && (
                             <div className="project-links">
                                 {project.links.github && (
@@ -508,7 +597,7 @@ const ProjectDetailPage: React.FC<{
                                 )}
                                 {project.links.youtube && (
                                     <a href={project.links.youtube} target="_blank" rel="noopener noreferrer">
-                                         <svg width="20" height="20" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><path d="M21.58 7.19c-.23-.86-.9-1.52-1.76-1.76C18.25 5 12 5 12 5s-6.25 0-7.82.43c-.86.24-1.53.9-1.76 1.76C2 8.76 2 12 2 12s0 3.24.43 4.81c.23.86.9 1.52 1.76 1.76C5.75 19 12 19 12 19s6.25 0 7.82-.43c.86-.24 1.53.9 1.76-1.76C22 15.24 22 12 22 12s0-3.24-.42-4.81zM10 15.46V8.54L15.2 12 10 15.46z"></path></svg>
+                                         <svg width="24" height="24" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><path d="M21.58 7.19c-.23-.86-.9-1.52-1.76-1.76C18.25 5 12 5 12 5s-6.25 0-7.82.43c-.86.24-1.53.9-1.76 1.76C2 8.76 2 12 2 12s0 3.24.43 4.81c.23.86.9 1.52 1.76 1.76C5.75 19 12 19 12 19s6.25 0 7.82-.43c.86-.24 1.53.9 1.76-1.76C22 15.24 22 12 22 12s0-3.24-.42-4.81zM10 15.46V8.54L15.2 12 10 15.46z"></path></svg>
                                         YouTube
                                     </a>
                                 )}
@@ -526,10 +615,19 @@ const ProjectDetailPage: React.FC<{
                     <div><strong>Role</strong><span>{project.role}</span></div>
                 </AnimatedSection>
 
-                <AnimatedSection className="detail-section newline">
-                    <h2>Project Overview</h2>
-                    <p>{project.description}</p>
+                {project.outcome && (
+                    <AnimatedSection className="detail-section">
+                        <h2>Key Outcomes</h2>
+                        <ContentRenderer content={project.outcome} />
+                    </AnimatedSection>
+                )}
+
+                {project.description && (
+                    <AnimatedSection className="detail-section newline">
+                        <h2>Project Overview</h2>
+                        <ContentRenderer content={project.description} />
                 </AnimatedSection>
+                )}
 
                 <AnimatedSection className="detail-section">
                     <h2>Process</h2>
@@ -538,10 +636,12 @@ const ProjectDetailPage: React.FC<{
                     </ol>
                 </AnimatedSection>
 
-                <AnimatedSection className="detail-section newline">
-                    <h2>Challenges & Solutions</h2>
-                    <p>{project.challenges}</p>
-                </AnimatedSection>
+                {project.challenges && (
+                    <AnimatedSection className="detail-section">
+                        <h2>Challenges & Solutions</h2>
+                        <ContentRenderer content={project.challenges} />
+                    </AnimatedSection>
+                )}
 
                 {project.gallery?.length > 0 && (
                     <AnimatedSection className="detail-section">
@@ -734,6 +834,8 @@ const ProjectForm: React.FC<{
         onSave(finalProject);
     };
 
+    const expandablePlaceholder = `For simple text, just type here.\nFor expandable sections, use this format:\n[Summary]\nThe first key point.\n[Details]\nMore details about the first key point.\n---\n[Summary]\nThe second key point.\n[Details]\nMore details about the second point.`;
+
     return (
         <form onSubmit={handleSubmit} className="project-form">
             <h2>{project ? 'Edit Project' : 'Add New Project'}</h2>
@@ -773,11 +875,11 @@ const ProjectForm: React.FC<{
             </div>
             <div className="form-group">
                 <label>Outcome</label>
-                <textarea name="outcome" value={formData.outcome} onChange={handleChange} rows={2}></textarea>
+                <textarea name="outcome" value={expandableContentToString(formData.outcome)} onChange={e => setFormData(prev => ({...prev, outcome: stringToExpandableContent(e.target.value)}))} rows={5} placeholder={expandablePlaceholder}></textarea>
             </div>
             <div className="form-group">
                 <label>Description</label>
-                <textarea name="description" value={formData.description} onChange={handleChange} rows={4}></textarea>
+                <textarea name="description" value={expandableContentToString(formData.description)} onChange={e => setFormData(prev => ({...prev, description: stringToExpandableContent(e.target.value)}))} rows={5} placeholder={expandablePlaceholder}></textarea>
             </div>
             <div className="form-group">
                 <label>Role</label>
@@ -789,7 +891,7 @@ const ProjectForm: React.FC<{
             </div>
             <div className="form-group">
                 <label>Challenges</label>
-                <textarea name="challenges" value={formData.challenges} onChange={handleChange} rows={3}></textarea>
+                <textarea name="challenges" value={expandableContentToString(formData.challenges)} onChange={e => setFormData(prev => ({...prev, challenges: stringToExpandableContent(e.target.value)}))} rows={5} placeholder={expandablePlaceholder}></textarea>
             </div>
             <div className="project-links-form-section">
                 <h3>Project Links</h3>
