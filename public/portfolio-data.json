@@ -210,10 +210,12 @@
         "Comprehensive Documentation & Testing"
       ],
       "challenges": "Initially, comprehending the mechanism for publishing an npm library to be globally downloadable by users was challenging due to a lack of prior experience. Designing intuitive CLI command names and a step-by-step UI was also demanding. Integrating unfamiliar tools like esbuild, SWC, and Bun cohesively posed another significant hurdle. These issues were systematically addressed through thorough documentation review, incremental feature implementation, and extensive experimentation. \n\nThe most formidable challenge involved relaying esbuild's CLI-only error messages to the browser, which necessitated developing a WebSocket server for development and arduously integrating it with esbuild through persistent trial and error, even with AI assistance.",
-      "gallery": [],
+      "gallery": [
+        "https://raw.githubusercontent.com/sssssqew/product-design-portfolio/refs/heads/main/imgs/react-esbuild/react-esbuild%20demo%20video.gif"
+      ],
       "links": {
         "github": "https://github.com/sssssqew/react-esbuild/tree/main",
-        "liveDemo": "",
+        "liveDemo": "https://www.npmjs.com/package/react-esbuild",
         "youtube": ""
       },
       "id": "1759216325615",
