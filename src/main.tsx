@@ -83,33 +83,6 @@ const useAnimatedVisibility = <T extends HTMLElement>(options = { threshold: 0.1
     return [ref, isVisible] as const;
 };
 
-const expandableContentToString = (content: string | ExpandableContent[]): string => {
-    if (typeof content === 'string') return content;
-    if (!Array.isArray(content) || content.length === 0) return '';
-    return content.map(item => `[Summary]\n${item.summary}\n[Details]\n${item.details}`).join('\n---\n');
-};
-
-const stringToExpandableContent = (str: string): string | ExpandableContent[] => {
-    if (!str.includes('[Summary]') || !str.includes('[Details]')) return str.trim();
-    
-    const items = str.split('\n---\n');
-    const content: ExpandableContent[] = items.map(itemStr => {
-        const summaryMatch = itemStr.match(/\[Summary\]\s*([\s\S]*?)\s*\[Details\]/);
-        const detailsMatch = itemStr.match(/\[Details\]\s*([\s\S]*)/);
-        
-        const summary = summaryMatch ? summaryMatch[1].trim() : '';
-        const details = detailsMatch ? detailsMatch[1].trim() : '';
-        
-        if (summary) {
-            return { summary, details };
-        }
-        return null;
-    }).filter((item): item is ExpandableContent => item !== null);
-
-    return content.length > 0 ? content : str.trim();
-};
-
-
 // --- UI COMPONENTS --- // 
 
 const Header: React.FC<{
@@ -391,25 +364,45 @@ const ExpandableSection: React.FC<{ summary: string; details: string }> = ({ sum
     const [isExpanded, setIsExpanded] = useState(false);
     const detailsRef = useRef<HTMLDivElement>(null);
 
+    const hasDetails = details && details.trim().length > 0;
+
+    const toggleExpansion = () => {
+        if (hasDetails) {
+            setIsExpanded(!isExpanded);
+        }
+    };
+
+    const handleKeyDown = (e: React.KeyboardEvent) => {
+        if (hasDetails && (e.key === 'Enter' || e.key === ' ')) {
+            toggleExpansion();
+        }
+    };
+
     return (
-        <div className={`expandable-section ${isExpanded ? 'expanded' : ''}`}>
-            <div className="expandable-header" onClick={() => setIsExpanded(!isExpanded)} role="button" tabIndex={0} onKeyDown={(e) => (e.key === 'Enter' || e.key === ' ') && setIsExpanded(!isExpanded)} aria-expanded={isExpanded}>
+        <div className={`expandable-section ${isExpanded ? 'expanded' : ''} ${!hasDetails ? 'no-details' : ''}`}>
+            <div className="expandable-header" onClick={toggleExpansion} role={hasDetails ? "button" : undefined}  tabIndex={hasDetails ? 0 : -1}  onKeyDown={handleKeyDown} aria-expanded={hasDetails ? isExpanded : undefined}>
                 <p className="summary">{summary}</p>
-                <div className="expand-button">
-                    <span>{isExpanded ? 'Collapse' : 'Read More'}</span>
-                    <svg viewBox="0 0 24 24"><path d="M7.41 8.59L12 13.17l4.59-4.58L18 10l-6 6-6-6 1.41-1.41z"/></svg>
-                </div>
+                {/* Conditionally render the "Read More" button */}
+                {hasDetails && (
+                    <div className="expand-button">
+                        <span>{isExpanded ? 'Collapse' : 'Read More'}</span>
+                        <svg viewBox="0 0 24 24"><path d="M7.41 8.59L12 13.17l4.59-4.58L18 10l-6 6-6-6 1.41-1.41z"/></svg>
+                    </div>
+                )}
             </div>
-            <div 
-                ref={detailsRef}
-                className="expandable-details-wrapper"
-                style={{ maxHeight: isExpanded ? `${detailsRef.current?.scrollHeight}px` : '0px' }}
-                aria-hidden={!isExpanded}
-            >
-                <div className="details">
-                    <p className="multi-line-text">{details}</p>
+            {/* Conditionally render the details wrapper */}
+            {hasDetails && (
+                <div 
+                    ref={detailsRef}
+                    className="expandable-details-wrapper"
+                    style={{ maxHeight: isExpanded ? `${detailsRef.current?.scrollHeight}px` : '0px' }}
+                    aria-hidden={!isExpanded}
+                >
+                    <div className="details">
+                        <p className="multi-line-text">{details}</p>
+                    </div>
                 </div>
-            </div>
+            )}
         </div>
     );
 };
@@ -762,25 +755,153 @@ const AdminLogin: React.FC<{
     );
 };
 
+const BadgeInputEditor: React.FC<{
+    value: ExpandableContent[];
+    onChange: (value: ExpandableContent[]) => void;
+    label: string;
+}> = ({ value, onChange, label }) => {
+    const [inputValue, setInputValue] = useState('');
+    const [activeIndex, setActiveIndex] = useState<number | null>(null);
+    const inputRef = useRef<HTMLInputElement>(null);
+
+    const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+        if (e.key === 'Enter' && inputValue.trim()) {
+            e.preventDefault();
+            onChange([...value, { summary: inputValue.trim(), details: '' }]);
+            setInputValue('');
+        } else if (e.key === 'Backspace' && !inputValue && value.length > 0) {
+            e.preventDefault();
+            const lastItem = value[value.length - 1];
+            onChange(value.slice(0, -1));
+            setInputValue(lastItem.summary); 
+            if(activeIndex === value.length - 1) {
+                setActiveIndex(null);
+            }
+        }
+    };
+
+    const handleDelete = (indexToDelete: number) => {
+        onChange(value.filter((_, index) => index !== indexToDelete));
+        if (activeIndex === indexToDelete) {
+            setActiveIndex(null);
+        } else if (activeIndex !== null && activeIndex > indexToDelete) {
+            setActiveIndex(activeIndex - 1);
+        }
+    };
+
+    const handleBadgeClick = (index: number) => {
+        setActiveIndex(prevIndex => (prevIndex === index ? null : index));
+    };
+
+    const handleDetailChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
+        if (activeIndex === null) return;
+        const newItems = [...value];
+        newItems[activeIndex] = { ...newItems[activeIndex], details: e.target.value };
+        onChange(newItems);
+    };
+
+    const activeSummary = activeIndex !== null ? value[activeIndex]?.summary : '';
+    const truncatedSummary = activeSummary.length > 30 ? `${activeSummary.substring(0, 30)}...` : activeSummary;
+
+    return (
+        <div className="badge-editor-container">
+            <label>{label}</label>
+            <div className="badge-input-area" onClick={() => inputRef.current?.focus()}>
+                {value.map((item, index) => (
+                    <div key={index} className={`summary-badge ${activeIndex === index ? 'active' : ''}`} onClick={(e) => { e.stopPropagation(); handleBadgeClick(index); }}>
+                        <span>{item.summary}</span>
+                        <button type="button" className="badge-delete-btn" title={`Delete ${item.summary}`} onClick={(e) => { e.stopPropagation(); handleDelete(index); }}>&times;</button>
+                    </div>
+                ))}
+                <input
+                    ref={inputRef}
+                    type="text"
+                    value={inputValue}
+                    onChange={(e) => setInputValue(e.target.value)}
+                    onKeyDown={handleKeyDown}
+                    placeholder={value.length === 0 ? 'Type a summary and press Enter...' : ''}
+                />
+            </div>
+            {activeIndex !== null && (
+                <div className="details-editor">
+                    <label>DETAIL ({truncatedSummary})</label>
+                    <textarea
+                        value={value[activeIndex]?.details || ''}
+                        onChange={handleDetailChange}
+                        rows={5}
+                        placeholder={`Add details for "${activeSummary}"...`}
+                        autoFocus
+                    />
+                </div>
+            )}
+        </div>
+    );
+};
+
+// This interface defines the shape of the data used *inside* the ProjectForm.
+// It's explicitly defined to ensure that fields like 'outcome' are always arrays,
+// resolving TypeScript's confusion when deriving from the base 'Project' type.
+interface ProjectFormData {
+    title: string;
+    type: string;
+    imageUrl: string;
+    duration: string;
+    difficulty: 'Easy' | 'Medium' | 'Hard' | 'Expert';
+    stack: string[];
+    tags: string[];
+    role: string;
+    process: string[];
+    gallery: string[];
+    links?: {
+      github?: string;
+      liveDemo?: string;
+      youtube?: string;
+    };
+    // These fields are guaranteed to be arrays within the form
+    outcome: ExpandableContent[];
+    description: ExpandableContent[];
+    challenges: ExpandableContent[];
+}
+
 const ProjectForm: React.FC<{
     project?: Project;
     onSave: (project: Project) => void;
     onCancel: () => void;
     projectTypes: string[];
 }> = ({ project, onSave, onCancel, projectTypes }) => {
-    const [formData, setFormData] = useState<Omit<Project, 'id' | 'date'>>({
+    const SUMMARY_MAX_LENGTH = 70; // Max length for a string to be treated as a summary.
+    
+    const normalizeToArray = (content: string | ExpandableContent[] | undefined): ExpandableContent[] => {
+        if (!content) return [];
+        if (Array.isArray(content)) return content;
+        
+        if (typeof content === 'string') {
+            const trimmedContent = content.trim();
+            if (!trimmedContent) return [];
+            
+            // If the legacy string is too long for a badge, treat it as details.
+            if (trimmedContent.length > SUMMARY_MAX_LENGTH) {
+                return [{ summary: 'Key Finding', details: trimmedContent }];
+            }
+            // Otherwise, treat it as a summary.
+            return [{ summary: trimmedContent, details: '' }];
+        }
+        return [];
+    };
+
+    const [formData, setFormData] = useState<ProjectFormData>({
         title: project?.title || '',
         type: project?.type || 'Frontend',
         imageUrl: project?.imageUrl || '',
         duration: project?.duration || '',
         difficulty: project?.difficulty || 'Medium',
-        outcome: project?.outcome || '',
+        outcome: normalizeToArray(project?.outcome),
         stack: project?.stack || [],
         tags: project?.tags || [],
-        description: project?.description || '',
+        description: normalizeToArray(project?.description),
         role: project?.role || '',
         process: project?.process || [],
-        challenges: project?.challenges || '',
+        challenges: normalizeToArray(project?.challenges),
         gallery: project?.gallery || [],
         links: project?.links || { github: '', liveDemo: '', youtube: '' },
     });
@@ -826,15 +947,27 @@ const ProjectForm: React.FC<{
 
     const handleSubmit = (e: React.FormEvent) => {
         e.preventDefault();
+
+        const formatContent = (content: ExpandableContent[]): string | ExpandableContent[] => {
+            if (content.length === 1 && !content[0].details.trim()) {
+                return content[0].summary;
+            }
+            if (content.length === 0) {
+                return '';
+            }
+            return content;
+        };
+
         const finalProject: Project = {
-            ...formData,
+            ...(formData as any), // Cast to any to handle array fields
+            outcome: formatContent(formData.outcome),
+            description: formatContent(formData.description),
+            challenges: formatContent(formData.challenges),
             id: project?.id || Date.now().toString(),
             date: project?.date || new Date().toISOString().split('T')[0],
         };
         onSave(finalProject);
     };
-
-    const expandablePlaceholder = `For simple text, just type here.\nFor expandable sections, use this format:\n[Summary]\nThe first key point.\n[Details]\nMore details about the first key point.\n---\n[Summary]\nThe second key point.\n[Details]\nMore details about the second point.`;
 
     return (
         <form onSubmit={handleSubmit} className="project-form">
@@ -874,12 +1007,18 @@ const ProjectForm: React.FC<{
                 </select>
             </div>
             <div className="form-group">
-                <label>Outcome</label>
-                <textarea name="outcome" value={expandableContentToString(formData.outcome)} onChange={e => setFormData(prev => ({...prev, outcome: stringToExpandableContent(e.target.value)}))} rows={5} placeholder={expandablePlaceholder}></textarea>
+                <BadgeInputEditor
+                    label="Outcome"
+                    value={formData.outcome}
+                    onChange={newItems => setFormData(prev => ({...prev, outcome: newItems}))}
+                />
             </div>
             <div className="form-group">
-                <label>Description</label>
-                <textarea name="description" value={expandableContentToString(formData.description)} onChange={e => setFormData(prev => ({...prev, description: stringToExpandableContent(e.target.value)}))} rows={5} placeholder={expandablePlaceholder}></textarea>
+                <BadgeInputEditor
+                    label="Description"
+                    value={formData.description}
+                    onChange={newItems => setFormData(prev => ({...prev, description: newItems}))}
+                />
             </div>
             <div className="form-group">
                 <label>Role</label>
@@ -890,8 +1029,11 @@ const ProjectForm: React.FC<{
                 <input type="text" value={processInput} onChange={e => handleArrayInputChange(e.target.value, 'process', setProcessInput)} />
             </div>
             <div className="form-group">
-                <label>Challenges</label>
-                <textarea name="challenges" value={expandableContentToString(formData.challenges)} onChange={e => setFormData(prev => ({...prev, challenges: stringToExpandableContent(e.target.value)}))} rows={5} placeholder={expandablePlaceholder}></textarea>
+                 <BadgeInputEditor
+                    label="Challenges"
+                    value={formData.challenges}
+                    onChange={newItems => setFormData(prev => ({...prev, challenges: newItems}))}
+                />
             </div>
             <div className="project-links-form-section">
                 <h3>Project Links</h3>

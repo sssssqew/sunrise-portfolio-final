@@ -555,13 +555,25 @@
       "date": "2024-05-20"
     },
     {
-      "id": "1759884020006",
       "title": "Generative Art Explorer (복사본)",
       "type": "AI Creations",
       "imageUrl": "https://images.unsplash.com/photo-1677756119517-756a188d2d94?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3wzOT二次MDd8MHwxfHNlYXJjaHwxfHxnZW5lcmF0aXZlJTIwYXJ0fGVufDB8fHx8MTcxNzI3NzIwMnww&ixlib=rb-4.0.3&q=80&w=1080",
       "duration": "Ongoing",
       "difficulty": "Expert",
-      "outcome": "Developed a web-based tool for creating and exploring generative art using diffusion models.",
+      "outcome": [
+        {
+          "summary": "nature",
+          "details": ""
+        },
+        {
+          "summary": "cool wind",
+          "details": "nezealnd cool wind is very good"
+        },
+        {
+          "summary": "sky blue",
+          "details": "summer has awesome sky "
+        }
+      ],
       "stack": [
         "Gemini API",
         "React",
@@ -574,8 +586,7 @@
         "Art",
         "Web App"
       ],
-      "date": "2024-05-20",
-      "description": "A personal project to explore the intersection of artificial intelligence and creativity. This application allows users to generate unique visual art by providing text prompts, and then further manipulate the results using various parameters.",
+      "description": "",
       "role": "AI Developer & Creative Technologist",
       "process": [
         "Model Selection & API Integration",
@@ -584,12 +595,28 @@
         "Backend for API Key Management",
         "Gallery and Sharing Features"
       ],
-      "challenges": "Managing asynchronous API calls and handling large image data efficiently on the client-side was a significant challenge. Implemented a queueing system and used Web Workers to offload heavy processing, ensuring a responsive user interface.",
+      "challenges": [
+        {
+          "summary": "hardship is good for you",
+          "details": "you can endure and overcome this situation\n"
+        },
+        {
+          "summary": "this is not that much",
+          "details": ""
+        }
+      ],
       "gallery": [
         "https://images.unsplash.com/photo-1683520188210-51c07652758f?w=800",
         "https://images.unsplash.com/photo-1692790933823-3343a0153163?w=800",
         "https://images.unsplash.com/photo-1688502393222-3d5671181232?w=800"
-      ]
+      ],
+      "links": {
+        "github": "",
+        "liveDemo": "",
+        "youtube": ""
+      },
+      "id": "1759884020006",
+      "date": "2024-05-20"
     },
     {
       "title": "Creative AI Animation Production: Piggy's Debut Adventure",
