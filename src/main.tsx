@@ -115,7 +115,7 @@ const ProjectCard: React.FC<{ project: Project; onClick: () => void }> = ({ proj
     const [ref, isVisible] = useAnimatedVisibility<HTMLDivElement>();
     const outcomeText = useMemo(() => {
         if (Array.isArray(project.outcome)) {
-            return project.outcome.map(o => o.summary).join(' ');
+            return project.outcome.map(o => o.summary).join('\n');
         }
         return project.outcome;
     }, [project.outcome]);
