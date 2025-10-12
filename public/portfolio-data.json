@@ -40,7 +40,16 @@
         "AI-Enhanced Interaction",
         "UX/UI Prototyping"
       ],
-      "description": "The 'Emotive AI 'Album Storyteller'' is a hybrid application conceptualized to offer a relaxed, everyday feel, seamlessly integrating into users' daily routines. This design philosophy was shaped through thorough research and analysis of existing storytelling applications, ensuring an intuitive yet unique approach to memory preservation. The project directly addresses the common challenge of conveniently and quickly recording daily life and significant moments with personalized stories.\n\nBuilt with a distinctive emotive user interface, the application integrates a proprietary laboratory-developed AI engine (Image-to-Text), enabling users to effortlessly generate narratives. Specifically, by selecting just five images from Google Photos and with a single click, the application automatically crafts an emotive story closely related to the chosen photographs. This approach leverages advanced AI to provide an intuitive and deeply personal storytelling experience, empowering users to record their memories with unprecedented ease and emotional depth.",
+      "description": [
+        {
+          "summary": "Research-driven hybrid app for personalized daily memory preservation.",
+          "details": "The 'Emotive AI 'Album Storyteller'' is a hybrid application conceptualized to offer a relaxed, everyday feel, seamlessly integrating into users' daily routines. This design philosophy was shaped through thorough research and analysis of existing storytelling applications, ensuring an intuitive yet unique approach to memory preservation. The project directly addresses the common challenge of conveniently and quickly recording daily life and significant moments with personalized stories."
+        },
+        {
+          "summary": "Proprietary AI & emotive UI: one-click personalized storytelling from 5 photos.",
+          "details": "Built with a distinctive emotive user interface, the application integrates a proprietary laboratory-developed AI engine (Image-to-Text), enabling users to effortlessly generate narratives. Specifically, by selecting just five images from Google Photos and with a single click, the application automatically crafts an emotive story closely related to the chosen photographs. This approach leverages advanced AI to provide an intuitive and deeply personal storytelling experience, empowering users to record their memories with unprecedented ease and emotional depth."
+        }
+      ],
       "role": "Creative Technologist (UX Lead & Frontend Developer)",
       "process": [
         "Competitive & Conceptual Research /  User Flow Analysis (Usability-Focused)",
