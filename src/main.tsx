@@ -762,20 +762,94 @@ const BadgeInputEditor: React.FC<{
 }> = ({ value, onChange, label }) => {
     const [inputValue, setInputValue] = useState('');
     const [activeIndex, setActiveIndex] = useState<number | null>(null);
+    const [inputIndex, setInputIndex] = useState(value.length); // Tracks cursor position
+    const [editingState, setEditingState] = useState<{ item: ExpandableContent; originalIndex: number } | null>(null);
     const inputRef = useRef<HTMLInputElement>(null);
+    const badgeAreaRef = useRef<HTMLDivElement>(null); // Ref for the container
+
+    // Focus input when its position changes
+    useEffect(() => {
+        inputRef.current?.focus();
+    }, [inputIndex]);
+
+    // If the value array changes from outside, ensure index is not out of bounds
+    useEffect(() => {
+        if (inputIndex > value.length) {
+            setInputIndex(value.length);
+        }
+    }, [value.length, inputIndex]);
+
+    const handleAreaClick = (e: React.MouseEvent<HTMLDivElement>) => {
+        // Calculate where the user clicked in the badge area.
+        const clickX = e.clientX;
+        const badgeNodes = badgeAreaRef.current ? Array.from(badgeAreaRef.current.querySelectorAll('.summary-badge')) : [];
+        let newIndex = badgeNodes.length;
+
+        for (let i = 0; i < badgeNodes.length; i++) {
+            const node = badgeNodes[i] as HTMLElement;
+            const rect = node.getBoundingClientRect();
+            const midpoint = rect.left + rect.width / 2;
+            if (clickX < midpoint) {
+                newIndex = i;
+                break;
+            }
+        }
+
+        // If a badge is being edited (via backspace), clicking away cancels the edit.
+        if (editingState) {
+            const { item, originalIndex } = editingState;
+
+            // Calculate the correct final position for the input cursor.
+            // If the restored badge is inserted before or at the clicked position,
+            // the cursor's target index needs to be shifted one place to the right.
+            let finalIndex = newIndex;
+            if (originalIndex <= newIndex) {
+                finalIndex++;
+            }
+            setInputIndex(finalIndex);
+
+            // Restore the badge to the list.
+            const restoredItems = [...value];
+            restoredItems.splice(originalIndex, 0, item);
+            onChange(restoredItems);
+            
+            // Finally, clear the input and the editing state.
+            setInputValue('');
+            setEditingState(null);
+        } else {
+            // If not in an editing state, just move the cursor to the clicked position.
+            setInputIndex(newIndex);
+        }
+    };
 
     const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
         if (e.key === 'Enter' && inputValue.trim()) {
             e.preventDefault();
-            onChange([...value, { summary: inputValue.trim(), details: '' }]);
+            const newItems = [...value];
+            const newItem: ExpandableContent = {
+                summary: inputValue.trim(),
+                details: editingState?.item.details ?? '', // Use stored details if they exist, otherwise empty string
+            };
+            newItems.splice(inputIndex, 0, newItem);
+
+            onChange(newItems);
             setInputValue('');
+            setInputIndex(prev => prev + 1);
+            setEditingState(null); // Reset after use
         } else if (e.key === 'Backspace' && !inputValue && value.length > 0) {
             e.preventDefault();
-            const lastItem = value[value.length - 1];
-            onChange(value.slice(0, -1));
-            setInputValue(lastItem.summary); 
-            if(activeIndex === value.length - 1) {
-                setActiveIndex(null);
+            const itemToRemoveIndex = inputIndex - 1;
+            const itemToRemove = value[itemToRemoveIndex];
+            
+            const newItems = value.filter((_, index) => index !== itemToRemoveIndex);
+            onChange(newItems); // remove badge at the left of cursor
+
+            setInputValue(itemToRemove.summary);
+            setEditingState({item: itemToRemove, originalIndex: itemToRemoveIndex}); // Store details for editing
+            setInputIndex(prev => prev - 1);
+
+            if (activeIndex !== null && activeIndex > itemToRemoveIndex) {
+                setActiveIndex(prev => prev! - 1);
             }
         }
     };
@@ -787,6 +861,9 @@ const BadgeInputEditor: React.FC<{
         } else if (activeIndex !== null && activeIndex > indexToDelete) {
             setActiveIndex(activeIndex - 1);
         }
+        if (inputIndex > indexToDelete) {
+            setInputIndex(prev => prev - 1);
+        }
     };
 
     const handleBadgeClick = (index: number) => {
@@ -795,38 +872,67 @@ const BadgeInputEditor: React.FC<{
 
     const handleDetailChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
         if (activeIndex === null) return;
-        const newItems = [...value];
-        newItems[activeIndex] = { ...newItems[activeIndex], details: e.target.value };
-        onChange(newItems);
+        const isEditingActiveItem = editingState?.originalIndex === activeIndex; // check if you modify the details for editing badge
+
+        if (isEditingActiveItem) {
+            setEditingState(prev => prev ? { // If we're editing the active item, update the details in the editingState.
+                ...prev,
+                item: {
+                    ...prev.item,
+                    details: e.target.value
+                }
+            } : null);
+        }else {
+            // Otherwise, update the item directly in the main `value` array.
+             const newItems = [...value];
+            newItems[activeIndex] = { ...newItems[activeIndex], details: e.target.value };
+            onChange(newItems);
+        }
     };
+
+    // Determine the correct item to display in the details editor.
+    // It could be from the main `value` array or from the temporary `editingState`.
+    const isEditingActiveItem = editingState?.originalIndex === activeIndex;
+    const activeItem = isEditingActiveItem ? editingState!.item : (activeIndex !== null ? value[activeIndex] : null);
 
     const activeSummary = activeIndex !== null ? value[activeIndex]?.summary : '';
     const truncatedSummary = activeSummary.length > 30 ? `${activeSummary.substring(0, 30)}...` : activeSummary;
 
+    const renderContent = () => {
+        const elements: React.ReactNode[] = value.map((item, index) => (
+            <div key={`badge-${index}`} className={`summary-badge ${activeIndex === index ? 'active' : ''}`} onClick={(e) => { e.stopPropagation(); handleBadgeClick(index); }}>
+                <span>{item.summary}</span>
+                <button type="button" className="badge-delete-btn" title={`Delete ${item.summary}`} onClick={(e) => { e.stopPropagation(); handleDelete(index); }}>&times;</button>
+            </div>
+        ));
+
+        const inputElement = (
+            <input
+                key="input-field"
+                ref={inputRef}
+                type="text"
+                value={inputValue}
+                onChange={(e) => setInputValue(e.target.value)}
+                onKeyDown={handleKeyDown}
+                placeholder={value.length === 0 ? 'Type a summary and press Enter...' : ''}
+            />
+        );
+
+        elements.splice(inputIndex, 0, inputElement);
+        return elements;
+    };
+
     return (
         <div className="badge-editor-container">
             <label>{label}</label>
-            <div className="badge-input-area" onClick={() => inputRef.current?.focus()}>
-                {value.map((item, index) => (
-                    <div key={index} className={`summary-badge ${activeIndex === index ? 'active' : ''}`} onClick={(e) => { e.stopPropagation(); handleBadgeClick(index); }}>
-                        <span>{item.summary}</span>
-                        <button type="button" className="badge-delete-btn" title={`Delete ${item.summary}`} onClick={(e) => { e.stopPropagation(); handleDelete(index); }}>&times;</button>
-                    </div>
-                ))}
-                <input
-                    ref={inputRef}
-                    type="text"
-                    value={inputValue}
-                    onChange={(e) => setInputValue(e.target.value)}
-                    onKeyDown={handleKeyDown}
-                    placeholder={value.length === 0 ? 'Type a summary and press Enter...' : ''}
-                />
+            <div ref={badgeAreaRef} className="badge-input-area" onClick={handleAreaClick}>
+                {renderContent()}
             </div>
-            {activeIndex !== null && (
+            {activeIndex !== null && activeItem && (
                 <div className="details-editor">
                     <label>DETAIL ({truncatedSummary})</label>
                     <textarea
-                        value={value[activeIndex]?.details || ''}
+                        value={activeItem.details || ''}
                         onChange={handleDetailChange}
                         rows={5}
                         placeholder={`Add details for "${activeSummary}"...`}
